@@ -2218,10 +2218,11 @@
     }
 
     function changeCredentials() {
+        
         var nonce = $('#new-nonce').value
         var password = $('#new-password').value
-        localStorage.setItem('nonce'.normalize('NFKC'), nonce)
-        localStorage.setItem('password'.normalize('NFKC'), password)
+        localStorage.setItem('nonce', nonce.normalize('NFKC'))
+        localStorage.setItem('password', password.normalize('NFKC'))
         displayTitles()
 
     }
