@@ -2075,22 +2075,21 @@
             sites: items
         }
         var text = JSON.stringify(bup, null, '  ')
-        if (localStorage.getItem('password') && localStorage.getItem('nonce')) {
+        if (localStorage.getItem('password')) {
+            var cryptResult = makeEncrypted(text)
             var encrypted = {
-                cryptoText: makeEncrypted(text),
+                cryptoText: cryptResult.cryptoText,
                 keyStretchFactor: 0,
                 keyStretchMethod: 'none',
                 cipher: 'chacha20',
-                nonce: localStorage.getItem('nonce')
+                nonce: cryptResult.nonce
             }
             $('#encrypted-backup').value = JSON.stringify(encrypted, null, '  ')
         } else {
-            $('#encrypted-backup').value = 'No nonce or password set. Please do that under "Credentials for backup and restore" first.'
+            $('#encrypted-backup').value = 'No nonce or password set. Please do that under "Passphrase for backup and restore" first.'
         }
         $('#password').innerHTML = localStorage.getItem('password')
-        $('#nonce').innerHTML = localStorage.getItem('nonce')
         $('#new-password').value = localStorage.getItem('password')
-        $('#new-nonce').value = localStorage.getItem('nonce')
         var foo = dbkeys.map(function(key) {
             $('#sites').innerHTML = $('#sites').innerHTML + '<div class="site"><button class="title" onclick="displayIt(\'' + key + '\')">' + key + '</button><button class="title" onclick="deleteIt(\'' + key + '\')">x</button> </div>'
             return key
@@ -2100,7 +2099,7 @@
 
     function makeEncrypted(text) {
         const key = new str2ab(localStorage.getItem('password'), 32)
-        const nonce = new str2ab(localStorage.getItem('nonce'), 12)
+        const nonce = crypto.getRandomValues(new Uint8Array(12))
         const data = new str2ab(text, 'textLength')
 
         const encoder = new JSChaCha20(key, nonce)
@@ -2109,12 +2108,12 @@
         const encr = encoder.encrypt(data)
         const decr = decoder.decrypt(encr)
             // console.log(ab2str(decr))
-        return bufferToBase64(encr)
+        return {cryptoText: bufferToBase64(encr), nonce:bufferToBase64(nonce)}
     }
 
     function decrypt(inText, inKey, inNonce) {
         const key = new str2ab(inKey, 32)
-        const nonce = new str2ab(inNonce, 12)
+        const nonce = new base64ToBuffer(inNonce)
         const cryptoText = new base64ToBuffer(inText)
         const decoder = new JSChaCha20(key, nonce)
         const decr = decoder.decrypt(cryptoText)
@@ -2196,10 +2195,8 @@
 
     function restore() {
         var key = localStorage.getItem('password')
-        var nonce = localStorage.getItem('nonce')
         var JSONtext = JSON.parse($("#restore").value)
-        var text = JSONtext.cryptoText
-        var clearText = decrypt(text, key, nonce)
+        var clearText = decrypt(JSONtext.cryptoText, key, JSONtext.nonce)
         console.log("RESTORED IS: " + clearText)
         var data = JSON.parse(clearText) // if this borks, something went wrong
             // var sites = Object.keys(data.sites)
@@ -2218,10 +2215,7 @@
     }
 
     function changeCredentials() {
-
-        var nonce = $('#new-nonce').value
         var password = $('#new-password').value
-        localStorage.setItem('nonce', nonce)
         localStorage.setItem('password', password)
         displayTitles()
 
@@ -2260,7 +2254,7 @@
     <textarea id="restore"></textarea>
     <button id="restore-backup" onclick="restore()">Restore</button>
     <hr>
-    <button onclick="toggleShowCredentials()">Credentials for backup &amp; restore:</button>
+    <button onclick="toggleShowCredentials()">Passphrase for backup &amp; restore:</button>
     <br> Make sure only <em>you</em> can see the screen before clicking the above button.
     <br>
     <div id="credentials" style="display:none">
@@ -2275,33 +2269,30 @@
                         <input type="text" name="newpassword" id="new-password" /> This should be long &amp; difficult to guess, for security. Max 32 chars for now. Stored: <code id="password" />"
                     </td>
                 </tr>
-                <tr>
-                    <td>Nonce:</td>
-                    <td>
-                        <input type="text" name="newnonce" id="new-nonce" /> Whatever really, not the same as everyone else, e.g. use your first name. Max 12 chars. Stored: <code id="nonce" />"
-                    </td>
-                </tr>
         </table>
-        <button onclick="changeCredentials()">Change credentials</button>
+        <button onclick="changeCredentials()">Update passphrase</button>
     </div>
     <hr>
     <div id="help">
         <h1>Help section</h1>
-        <h2>Purpose</h2> The purpose of Tootp is to be a totp client where it is easy to back up your totp site entries, and where all code is included on the page.
+        <h2>Purpose</h2> It's surprisingly difficult to backup many totp clients, such as FreeOTP, Authy or Google Authenticator. The purpose of Tootp is to be a totp client where it is easy to back up your totp site entries, and where all code is open source and included in the tootp page.
         <h2>Where data is stored</h2> All data is stored locally in your browser, in something called localstorage. If you uninstall the browser or in another way delete localstorage, your data is gone. Unless you've backed it up, see next section:
-        <h2>How to backup and restore</h2> First make sure you've set a password and a nonce in the "Credentials for backup &amp; restore:" section. Then just copy the contents of the "Encrypted backup" field and store that contents somewhere, preferrably in multiple places.
+        <h2>How to backup and restore</h2> First make sure you've set a password in the "Passphrase for backup &amp; restore:" section. Then just copy the contents of the "Encrypted backup" field and store that contents somewhere, preferrably in multiple places.
         <p>
             Restore by pasting the contents into the "Update from backup" field, and then click "Restore". The backup will update your local database, it won't delete entries not in the backup. So it is an update.
-            <h2>Security</h2> This project is quickly cobbled together and makes no guarantees. The status of this project is "Seems to work for me but I will use one more client, such as Authy to be on the safe side." All javascript is included in the page, no network access should happen after the page loads. If you load this page from your local device, then no network activity should happen at all.
+            <h2>Security</h2> This project is quickly cobbled together and makes no guarantees. The status of this project is "Seems to work for me but I will use one more client, such as FreeOTP to be on the safe side." All javascript is included in the page, no network access should happen after the page loads. If you load this page from your local device, then no network activity should happen at all.<p>
+            It is recommended that you save the source of this page too as a backup at least once, so that you always have a copy of the precise execution environment for restore purposes, in case there are unintentional quirks of the encryption in tootp. Indeed you may want to run tootp from a local file.<p>
+            If you are afraid of exploits in the browser getting at tootp data, consider running tootp in its own browser, maybe even in an environment that does not have network access. If you are worried about local keyloggers and screen scrapers having infected your system, then run tootp on another device than the one you log in on. This is the usual way of running totp clients. <p>However if your system is in that bad shape so that the attacker can manipulate your screen, you could still be compromised in different ways, regardless of defensive technology used.
             <h2>Credits</h2> A number of libraries have been used for this:
             <ul>
                 <li>JS-OTP library from Allan Jiang</li>
                 <li>JSchacha20 library from Bubelich Mykola</li>
                 <li>various snippets from Stack Overflow and gists</li>
             </ul>
-            If tootp doesn't work it's probably because of something I did.
+            If tootp doesn't work properly it's probably because of something I did.
             <h2>Future directions</h2> I'm thinking of including a QR code reader from here: <a href="http://dwa012.github.io/html5-qrcode/">HTML5 QR code Reader</a>
             <br> Also thinking of adding key stretching, maybe from here: <a href="http://ricmoo.github.io/scrypt-js/">scrypt-js</a>
+
     </div>
 </body>
 
