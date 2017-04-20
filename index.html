@@ -1,9 +1,8 @@
 <!doctype html>
 <html>
 
-<head>
-    <style type="text/css">
-    body,
+<head><meta name="viewport" content="width=device-width, initial-scale=1">
+   <style type="text/css">
     button,
     input {
         font-size: 200%
@@ -12,6 +11,205 @@
     input {
         border: solid
     }
+
+html {
+  font-family: sans-serif;
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+body {
+  margin: 0;
+}
+
+h1 {
+  font-size: 2em;
+  margin: 0.67em 0;
+}
+
+hr {
+  -webkit-box-sizing: content-box;
+     -moz-box-sizing: content-box;
+          box-sizing: content-box;
+  height: 0;
+}
+pre {
+  overflow: auto;
+}
+code,
+kbd,
+pre,
+samp {
+  font-family: monospace, monospace;
+  font-size: 1em;
+}
+button,
+input,
+optgroup,
+select,
+textarea {
+  color: inherit;
+  font: inherit;
+  margin: 0;
+}
+button {
+  overflow: visible;
+}
+button,
+select {
+  text-transform: none;
+}
+button,
+html input[type="button"],
+input[type="reset"],
+input[type="submit"] {
+  -webkit-appearance: button;
+  cursor: pointer;
+}
+button[disabled],
+html input[disabled] {
+  cursor: default;
+}
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+input {
+  line-height: normal;
+}
+
+
+textarea {
+  overflow: auto;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+td,
+th {
+  padding: 0;
+}
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+*:before,
+*:after {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+html {
+  font-size: 10px;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.42857143;
+  color: #333333;
+  background-color: #ffffff;
+}
+input,
+button,
+select,
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+a {
+  color: #337ab7;
+  text-decoration: none;
+}
+a:hover,
+a:focus {
+  color: #23527c;
+  text-decoration: underline;
+}
+a:focus {
+  outline: 5px auto -webkit-focus-ring-color;
+  outline-offset: -2px;
+}
+
+hr {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  border: 0;
+  border-top: 1px solid #eeeeee;
+}
+
+[role="button"] {
+  cursor: pointer;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6{
+  font-family: inherit;
+  font-weight: 500;
+  line-height: 1.1;
+  color: inherit;
+}
+
+h1,
+h2,
+h3 {
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+h4,
+h5,
+h6 {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+h1 {
+  font-size: 36px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 14px;
+}
+h6 {
+  font-size: 12px;
+}
+p {
+  margin: 0 0 10px;
+}
+
+
+
+ul,
+ol {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+ul ul,
+ol ul,
+ul ol,
+ol ol {
+  margin-bottom: 0;
+}
+
+
+
+
     </style>
     <script>
     function ab2str(buf) {
@@ -2225,7 +2423,7 @@
 
 <body>
     tootp
-    <h1 style="display:inline"><b id="current-site">Site
+    <h1><b id="current-site">Site
         </b></h1>
     <abbr></abbr>
     <div>
@@ -2238,11 +2436,12 @@
     <div>Add new site:</div>
     <div id="current-title" />
     <div>
-        Title:
-        <input type="text" name="title" id="title" />
-        <br>Seed:
-        <input type="text" name="seed" id="seed" />
-        <button id="save" onclick="saveIt()">Save</button>
+        <table><tr><td>
+        Title:</td><td>
+        <input type="text" name="title" id="title" /></td></tr>
+        <tr><td>Seed:</td><td>
+        <input type="text" name="seed" id="seed" /></td></tr>
+        <tr><td>&nbsp;</td><td><button id="save" onclick="saveIt()">Save</button></td></tr></table>
     </div>
     <hr>
     <h2>Saved sites</h2>
