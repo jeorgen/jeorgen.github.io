@@ -2671,7 +2671,7 @@
         var html = "<br>";
         if (a.indexOf("http://") === 0 || a.indexOf("https://") === 0)
             html += "<a target='_blank' href='" + a + "'>" + a + "</a><br>";
-        html += "<b>" + htmlEntities(a) + "</b><br><br>";
+        html += "<b id="theSeed">" + htmlEntities(a) + "</b><br><br>";
         document.getElementById("result").innerHTML = html;
         console.log("a in read is: " + a)
     }
@@ -2837,7 +2837,7 @@
 </head>
 
 <body style="">
-    1.27
+    1.28
     <div id="mainbody" style="display: inline;">
         <table class="tsel" border="0" width="100%">
             <tbody>
