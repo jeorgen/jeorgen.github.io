@@ -2378,13 +2378,13 @@
         if (currentSite.seed) {
             // console.log("IN CURRENT SITE WITH: " + JSON.stringify(currentSite))
             var timeCode = totp.getOtp(currentSite.seed)
-                $("#current-site").innerHTML = currentSite.title
+            $("#current-site").innerHTML = currentSite.title
 
             if ($("#result").innerHTML !== timeCode + '') {
                 // only update on change
                 $("#result").innerHTML = timeCode
             }
-            
+
         } else {
             $("#result").innerHTML = 'no site selected'
 
@@ -2502,21 +2502,22 @@
         <h2>How to backup and restore</h2> First make sure you've set a password in the "Passphrase for backup &amp; restore:" section. Then just copy the contents of the "Encrypted backup" field and store that contents somewhere, preferrably in multiple places.
         <p>
             Restore by pasting the contents into the "Update from backup" field, and then click "Update". The backup will update your local database, it won't delete entries not present in the backup.
-            <h2>Security</h2> This project is quickly cobbled together and makes no guarantees. The status of this project is "Seems to work for me but I will use one more client, such as FreeOTP to be on the safe side." All javascript is included in the page, no network access should happen after the page loads. If you load this page from your local device, then no network activity should happen at all.
-            <p>
-                It is recommended that you save the source of this page too as a backup at least once, so that you always have a copy of the precise execution environment for restore purposes, in case there are unintentional quirks of the encryption in tootp. Indeed you may want to run tootp from a local file.
-                <p>
-                    If you are afraid of exploits in the browser getting at tootp data, consider running tootp in its own browser, maybe even in an environment that does not have network access. If you are worried about local keyloggers and screen scrapers having infected your system, then run tootp on another device than the one you log in on. This is the usual way of running totp clients.
-                    <p>However if your system is in that bad shape so that the attacker can manipulate your screen, you could still be compromised in different ways, regardless of defensive technology used.
-                        <h2>Credits</h2> A number of libraries have been used for this:
-                        <ul>
-                            <li>JS-OTP library from Allan Jiang</li>
-                            <li>JSchacha20 library from Bubelich Mykola</li>
-                            <li>various snippets from Stack Overflow and gists</li>
-                        </ul>
-                        If tootp doesn't work properly it's probably because of something I did.
-                        <h2>Future directions</h2> I'm thinking of including a QR code reader from here: <a href="http://dwa012.github.io/html5-qrcode/">HTML5 QR code Reader</a>
-                        <br> Also thinking of adding key stretching, maybe from here: <a href="http://ricmoo.github.io/scrypt-js/">scrypt-js</a>
+            <h2>Security</h2> This project is quickly cobbled together and makes no guarantees. The status of this project is "Seems to work for me but I will use one more client, such as FreeOTP to be on the safe side." All javascript is included in the page, no network access should happen after the page loads. If you load this page from your local device, then no network activity should happen at all.</p>
+        <p>
+            It is recommended that you save the source of this page too as a backup at least once, so that you always have a copy of the precise execution environment for restore purposes, in case there are unintentional quirks of the encryption in tootp. Indeed you may want to run tootp from a local file.</p>
+        <p>
+            If you are afraid of exploits in the browser getting at tootp data, consider running tootp in its own browser, maybe even in an environment that does not have network access. If you are worried about local keyloggers and screen scrapers having infected your system, then run tootp on another device than the one you log in on. This is the usual way of running totp clients.</p>
+        <p>However if your system is in that bad shape so that the attacker can manipulate your screen, you could still be compromised in different ways, regardless of defensive technology used.</p>
+        <p>You may well want to choose a long and difficult password. You can always display it to see what it is and if you have configured multiple devices, chances are that you have at least one of them left in your possession at any given time.</p>
+        <h2>Credits</h2> A number of libraries have been used for this:
+        <ul>
+            <li>JS-OTP library from Allan Jiang</li>
+            <li>JSchacha20 library from Bubelich Mykola</li>
+            <li>various snippets from Stack Overflow and gists</li>
+        </ul>
+        If tootp doesn't work properly it's probably because of something I did.
+        <h2>Future directions</h2> I'm thinking of including a QR code reader from here: <a href="http://dwa012.github.io/html5-qrcode/">HTML5 QR code Reader</a>
+        <br> Also thinking of adding key stretching, maybe from here: <a href="http://ricmoo.github.io/scrypt-js/">scrypt-js</a>
     </div>
 </body>
 
