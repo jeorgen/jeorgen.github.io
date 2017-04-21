@@ -5240,6 +5240,11 @@
         var div = document.getElementById('credentials');
         div.style.display = div.style.display == "none" ? "block" : "none";
     }
+    function toggleVideoSection() {
+        var div = document.getElementById('qr-video-section');
+        div.style.display = div.style.display == "none" ? "block" : "none";
+    }
+    
 
     function changeCredentials() {
         var password = $('#new-password').value
@@ -5302,8 +5307,8 @@
         </table>
     </div>
     <hr>
-    <button>Scan QR code</button>
-    <div id="qr-video-section">
+    <button onclick="toggleVideoSection">Scan QR code</button>
+    <div id="qr-video-section" style="display:none">
         1.31
         <div id="mainbody" style="display: inline;">
             <table class="tsel" border="0" width="100%">
