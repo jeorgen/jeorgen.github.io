@@ -59,7 +59,23 @@ img{
 <script type="text/javascript">
   // QRCODE reader Copyright 2011 Lazar Laszlo
 // http://www.webqr.com
+var gCtx = null;
+var gCanvas = null;
+var c=0;
+var stype=0;
+var gUM=false;
+var webkit=false;
+var moz=false;
+var v=null;
 
+var imghtml='<div id="qrfile"><canvas id="out-canvas" width="320" height="240"></canvas>'+
+    '<div id="imghelp">drag and drop a QRCode here'+
+  '<br>or select a file'+
+  '<input type="file" onchange="handleFiles(this.files)"/>'+
+  '</div>'+
+'</div>';
+
+var vidhtml = '<video id="v" autoplay></video>';
 
 function dragenter(e) {
   e.stopPropagation();
@@ -182,23 +198,23 @@ function load()
 {
 
 
-var gCtx = null;
-var gCanvas = null;
-var c=0;
-var stype=0;
-var gUM=false;
-var webkit=false;
-var moz=false;
-var v=null;
+ gCtx = null;
+ gCanvas = null;
+ c=0;
+ stype=0;
+ gUM=false;
+ webkit=false;
+ moz=false;
+ v=null;
 
-var imghtml='<div id="qrfile"><canvas id="out-canvas" width="320" height="240"></canvas>'+
+ imghtml='<div id="qrfile"><canvas id="out-canvas" width="320" height="240"></canvas>'+
     '<div id="imghelp">drag and drop a QRCode here'+
   '<br>or select a file'+
   '<input type="file" onchange="handleFiles(this.files)"/>'+
   '</div>'+
 '</div>';
 
-var vidhtml = '<video id="v" autoplay></video>';
+ vidhtml = '<video id="v" autoplay></video>';
 
 
   if(isCanvasSupported() && window.File && window.FileReader)
@@ -323,7 +339,7 @@ function videoOff() {
 </head>
 
 <body style="">
-1.24
+1.25
 
 <div id="mainbody" style="display: inline;">
 <table class="tsel" border="0" width="100%">
