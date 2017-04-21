@@ -167,6 +167,7 @@ function read(a)
         html+="<a target='_blank' href='"+a+"'>"+a+"</a><br>";
     html+="<b>"+htmlEntities(a)+"</b><br><br>";
     document.getElementById("result").innerHTML=html;
+    console.log("a in read is: " + a)
 } 
 
 function isCanvasSupported(){
@@ -304,7 +305,7 @@ function setimg()
 </head>
 
 <body style="">
-1.22
+1.23
 
 <div id="mainbody" style="display: inline;">
 <table class="tsel" border="0" width="100%">
@@ -327,6 +328,5 @@ function setimg()
 </tbody></table>
 </div>&nbsp;
 <canvas id="qr-canvas" width="800" height="600" style="width: 800px; height: 600px;"></canvas>
-<script type="text/javascript">load();</script>
-</body>
+<button onclick="load()">Start</button></body>
 </html>
