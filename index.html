@@ -2926,7 +2926,7 @@
             html += "<a target='_blank' href='" + a + "'>" + a + "</a><br>";
         html += '<b id="theSeed">' + htmlEntities(a) + "</b><br><br>";
         document.getElementById("result").innerHTML = html;
-        console.log("a in read is: " + a)
+        includeSeed(a)
     }
 
     function isCanvasSupported() {
@@ -5218,7 +5218,7 @@
             }
 
         } else {
-            $("#result").innerHTML = 'no site selected'
+            $("#resultCode").innerHTML = 'no site selected'
 
         }
     }
@@ -5272,17 +5272,22 @@
             v.src = undefined
         }
     }
+
+    function includeSeed(a){
+        $('#seed').value = a
+
+    }
     </script>
 
 </head>
 
 <body>
-    tootp - This is alpha software!
+    tootp - This is alpha software! 0.1
     <h1><b id="current-site">Site
         </b></h1>
     <abbr></abbr>
     <div>
-        <h1 id="result" style="display:inline-block">Result
+        <h1 id="resultCode" style="display:inline-block">Result
         </h1> <span id="time" /></div>
     <hr>
     <div>Add new site:</div>
