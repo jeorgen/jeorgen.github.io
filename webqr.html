@@ -302,6 +302,19 @@ function setimg()
 
 </script>
 
+<script>
+function videoOff() {
+
+      if(moz)
+    {
+  v.mozSrcObject.getTracks()[0].stop()
+    }
+    else {
+  v.src.getTracks()[0].stop()
+}
+}
+</script>
+
 </head>
 
 <body style="">
@@ -329,4 +342,5 @@ function setimg()
 </div>&nbsp;
 <canvas id="qr-canvas" width="800" height="600" style="width: 800px; height: 600px;"></canvas>
 <button onclick="load()">Start</button></body>
+<button onclick="videoOff()">Stop</button></body>
 </html>
