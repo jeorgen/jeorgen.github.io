@@ -51,8 +51,13 @@
     }
     
     button.title {
-        margin-bottom: 10px;
-        margin-left: 10px
+        margin-bottom: 12px;
+        line-height: 200%
+    }
+
+    #sites {
+        padding-left: 8px
+
     }
     </style>
     <style type="text/css">
@@ -5250,7 +5255,7 @@
             statusIndicator.innerHTML = '&dtrif;'
         } else {
             div.style.display = "none"
-            statusIndicator.innerHTML = '&rtrif;'
+            statusIndicator.innerHTML = '&rtrif;...'
         }
     }
 
@@ -5285,8 +5290,7 @@
     <div>
         <h1 id="resultCode" style="display:inline-block">Result
         </h1> <span id="time" /></div>
-    <hr>
-    <button class="section-controller" onclick="toggleSection('new-site')">Add new site: <span class="toggle-status" id="new-site-section-toggle-status">&rtrif;</span> </button>
+    <button class="section-controller" onclick="toggleSection('new-site')">Add new site: <span class="toggle-status" id="new-site-section-toggle-status">&rtrif;...</span> </button>
     <div id="new-site-section" style="display:none">
         <div id="current-title">
         </div>
@@ -5343,12 +5347,10 @@
         <button onclick="load()">Start QR Reader</button>
         <button onclick="videoOff()">Stop QR Reader</button>
     </div>
-    <hr>
     <h2>Saved sites</h2>
     <div id="sites">
     </div>
-    <hr>
-    <button class="section-controller" onclick="toggleSection('backup-restore')">Backup &amp; restore <span class="toggle-status" id="backup-restore-section-toggle-status">&rtrif;</span> </button>
+    <button class="section-controller" onclick="toggleSection('backup-restore')">Backup &amp; restore <span class="toggle-status" id="backup-restore-section-toggle-status">&rtrif;...</span> </button>
     <div id="backup-restore-section" style="display:none">
         <textarea id="encrypted-backup"></textarea>
         <br>Copy the above and paste it somewhere where you would like to save it.
@@ -5357,8 +5359,7 @@
         <textarea id="restore"></textarea>
         <button id="restore-backup" onclick="restore()">Update</button>
     </div>
-    <hr>
-    <button class="section-controller" onclick="toggleSection('credentials')">Passphrase for backup &amp; restore <span class="toggle-status" id="credentials-section-toggle-status">&rtrif; </span></button>
+    <button class="section-controller" onclick="toggleSection('credentials')">Passphrase for backup &amp; restore <span class="toggle-status" id="credentials-section-toggle-status">&rtrif;...</span></button>
     <br> Make sure only <em>you</em> can see the screen before clicking the above button.
     <br>
     <div id="credentials-section" style="display:none">
@@ -5377,8 +5378,7 @@
         </table>
         <button onclick="changeCredentials()">Update passphrase</button>
     </div>
-    <hr>
-    <button class="section-controller" onclick="toggleSection('help')">Help section <span class="toggle-status" id="help-section-toggle-status">&rtrif; </span></button>
+    <button class="section-controller" onclick="toggleSection('help')">Help section <span class="toggle-status" id="help-section-toggle-status">&rtrif;...</span></button>
     <div id="help-section" style="display:none">
         <h2>Purpose</h2> It's surprisingly difficult to backup many totp clients, such as FreeOTP, Authy or Google Authenticator. The purpose of Tootp is to be a totp client where it is easy to back up your totp site entries, and where all code is open source and included in the tootp page.
         <h2>Where data is stored</h2> All data is stored locally in your browser, in something called localstorage. If you uninstall the browser or in another way delete localstorage, your data is gone. Unless you've backed it up, see next section:
