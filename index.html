@@ -5264,7 +5264,7 @@
 </head>
 
 <body>
-    tootp - This is alpha software! 0.14
+    <div style="text-align:right"><b>tootp</b> - This is alpha software! 0.14</div>
     <h1><b id="current-site">Site
         </b></h1>
     <div>
@@ -5325,8 +5325,8 @@
             </table>
         </div>
         <canvas id="qr-canvas" width="800" height="600" style="width: 800px; height: 600px;"></canvas>
-        <button onclick="load()">Start</button>
-        <button onclick="videoOff()">Stop</button>
+        <button onclick="load()">Start QR Reader</button>
+        <button onclick="videoOff()">Stop QR Reader</button>
     </div>
     <hr>
     <h2>Saved sites</h2>
@@ -5366,16 +5366,27 @@
         <h2>Where data is stored</h2> All data is stored locally in your browser, in something called localstorage. If you uninstall the browser or in another way delete localstorage, your data is gone. Unless you've backed it up, see next section:
         <h2>How to backup and restore</h2> First make sure you've set a password in the "Passphrase for backup &amp; restore:" section. Then just copy the contents of the "Encrypted backup" field and store that contents somewhere, preferrably in multiple places.
         <p>
-            Restore by pasting the contents into the "Update from backup" field, and then click "Update". The backup will update your local database, it won't delete entries not present in the backup.
-            <h2>Security</h2> This project is quickly cobbled together and makes no guarantees. The status of this project is "Seems to work for me but I will use one more client, such as FreeOTP to be on the safe side." All javascript is included in the page, no network access should happen after the page loads. If you load this page from your local device, then no network activity should happen at all.</p>
+            Restore by pasting the contents into the "Update from backup" field, and then click "Update". The backup will update your local database, it won't delete entries not present in the backup.</p>
+        <p>
+            This is what a backup looks like:
+            <pre>{
+  "cryptoText": "appgSvENGiJc7OWCzSGGIdNl++==",
+  "keyStretchFactor": 0,
+  "keyStretchMethod": "none",
+  "cipher": "chacha20",
+  "nonce": "9SCp7BHwwUY8c9Q8"
+}</pre>
+        </p>
+        <h2>Using the QR scanner</h2>
+        <p>Click the "Start" button to start scanning. When the scanner finds a qr code, it will automatically put it into the "Seed" field at the top. Click "Stop" to stop scanning. The only way to turn the camera off completely as of now, is to reload the page.</p>
+        <h2>Security</h2> This project is quickly cobbled together and makes no guarantees. The status of this project is "Seems to work for me but I will use one more client, such as FreeOTP to be on the safe side." All javascript is included in the page, no network access should happen after the page loads. If you load this page from your local device, then no network activity should happen at all.</p>
         <p>
             It is recommended that you save the source of this page too as a backup at least once, so that you always have a copy of the precise execution environment for restore purposes, in case there are unintentional quirks of the encryption in tootp. Although it may seem desireable to run tootp as a local file, in my tests it seems like local files can read each other's local storage entries.</p>
         <p>
             If you are afraid of exploits in the browser getting at tootp data, consider running tootp in its own browser, maybe even in an environment that does not have network access. If you are worried about local keyloggers and screen scrapers having infected your system, then run tootp on another device than the one you log in on. This is the usual way of running totp clients.</p>
         <p>However if your system is in that bad shape so that the attacker can manipulate your screen, you could still be compromised in different ways, regardless of defensive technology used.</p>
-        <p>You may well want to choose a long and difficult password. It is stored in localstorage by tootp, so you dot need to re-enter it. You can always display it to see what it is and if you have configured multiple devices, chances are that you have at least one of them left in your possession at any given time. If you believe that your seeds have been compromised, you should change the password and request new seeds from the sites.</p>
-        <h2>Using the QR scanner</h2>
-        <p>Open the scanner by clicking at the "QR Code Scanning" button. Click the "Start" button to start scanning. When the scanner finds a qr code, it will automatically put it into the "Seed" field at the top. Click "Stop" to stop scanning. The only way to turn the camera off completely as of now, is to reload the page.</p>
+        <p>You may well want to choose a long and difficult password. It is stored in localstorage by tootp, so you do not need to re-enter it. You can always display it to see what it is and if you have configured multiple devices, chances are that you have at least one of them left in your possession at any given time. If you believe that your seeds have been compromised, you should change the password and request new seeds from the sites.</p>
+
         <h2>Credits</h2> A number of libraries have been used for this:
         <ul>
             <li>JS-OTP library from Allan Jiang</li>
