@@ -39,6 +39,21 @@
     .tsel {
         padding: 0;
     }
+    
+    button.section-controller {
+        width: 100%;
+        text-align: left;
+        margin-bottom:10px
+    }
+    
+    button>span.toggle-status {
+        font-size: 160%
+    }
+    
+    button.title {
+        margin-bottom: 10px;
+        margin-left: 10px
+    }
     </style>
     <style type="text/css">
     button,
@@ -5271,7 +5286,7 @@
         <h1 id="resultCode" style="display:inline-block">Result
         </h1> <span id="time" /></div>
     <hr>
-    <button onclick="toggleSection('new-site')">Add new site: <span id="new-site-section-toggle-status">&rtrif;</span> </button>
+    <button class="section-controller" onclick="toggleSection('new-site')">Add new site: <span class="toggle-status" id="new-site-section-toggle-status">&rtrif;</span> </button>
     <div id="new-site-section" style="display:none">
         <div id="current-title">
         </div>
@@ -5333,15 +5348,17 @@
     <div id="sites">
     </div>
     <hr>
-    <button onclick="toggleSection('backup-restore')">Backup &amp; restore <span id="backup-restore-section-toggle-status">&rtrif;</span> </button>
+    <button class="section-controller" onclick="toggleSection('backup-restore')">Backup &amp; restore <span class="toggle-status" id="backup-restore-section-toggle-status">&rtrif;</span> </button>
     <div id="backup-restore-section" style="display:none">
-        <textarea id="encrypted-backup"></textarea> <br>Copy the above and paste it somewhere where you would like to save it.
-        <hr/> Update from backup:<br>
+        <textarea id="encrypted-backup"></textarea>
+        <br>Copy the above and paste it somewhere where you would like to save it.
+        <hr/> Update from backup:
+        <br>
         <textarea id="restore"></textarea>
         <button id="restore-backup" onclick="restore()">Update</button>
     </div>
     <hr>
-    <button onclick="toggleSection('credentials')">Passphrase for backup &amp; restore <span id="credentials-section-toggle-status">&rtrif; </span></button>
+    <button class="section-controller" onclick="toggleSection('credentials')">Passphrase for backup &amp; restore <span class="toggle-status" id="credentials-section-toggle-status">&rtrif; </span></button>
     <br> Make sure only <em>you</em> can see the screen before clicking the above button.
     <br>
     <div id="credentials-section" style="display:none">
@@ -5353,14 +5370,15 @@
                     <td>
                         Passphrase:</td>
                     <td>
-                        <input type="text" name="newpassword" id="new-password" /> <br>This should be long &amp; difficult to guess, for security. Max 32 chars for now. Stored: <code id="password" />"
+                        <input type="text" name="newpassword" id="new-password" />
+                        <br>This should be long &amp; difficult to guess, for security. Max 32 chars for now. Stored: <code id="password" />"
                     </td>
                 </tr>
         </table>
         <button onclick="changeCredentials()">Update passphrase</button>
     </div>
     <hr>
-    <button onclick="toggleSection('help')">Help section<span id="help-section-toggle-status">&rtrif; </span></button>
+    <button class="section-controller" onclick="toggleSection('help')">Help section <span class="toggle-status" id="help-section-toggle-status">&rtrif; </span></button>
     <div id="help-section" style="display:none">
         <h2>Purpose</h2> It's surprisingly difficult to backup many totp clients, such as FreeOTP, Authy or Google Authenticator. The purpose of Tootp is to be a totp client where it is easy to back up your totp site entries, and where all code is open source and included in the tootp page.
         <h2>Where data is stored</h2> All data is stored locally in your browser, in something called localstorage. If you uninstall the browser or in another way delete localstorage, your data is gone. Unless you've backed it up, see next section:
@@ -5386,18 +5404,16 @@
             If you are afraid of exploits in the browser getting at tootp data, consider running tootp in its own browser, maybe even in an environment that does not have network access. If you are worried about local keyloggers and screen scrapers having infected your system, then run tootp on another device than the one you log in on. This is the usual way of running totp clients.</p>
         <p>However if your system is in that bad shape so that the attacker can manipulate your screen, you could still be compromised in different ways, regardless of defensive technology used.</p>
         <p>You may well want to choose a long and difficult password. It is stored in localstorage by tootp, so you do not need to re-enter it. You can always display it to see what it is and if you have configured multiple devices, chances are that you have at least one of them left in your possession at any given time. If you believe that your seeds have been compromised, you should change the password and request new seeds from the sites.</p>
-
         <p>Consider hosting the tootp page on its own sub domain, being the only page on that sub domain, see: <a href="https://en.wikipedia.org/wiki/Same-origin_policy#Origin_determination_rules">Same-origin policy - Wikipedia</a> (local storage is supposed to follow the same rules as listed there. "Failure" is good in that table btw, for our purposes).
-
-        <h2>Credits</h2> A number of libraries have been used for this:
-        <ul>
-            <li>JS-OTP library from Allan Jiang</li>
-            <li>JSchacha20 library from Bubelich Mykola</li>
-            <li>QR code reader by Lazar Laszlo</li>
-            <li>various snippets from Stack Overflow and gists</li>
-        </ul>
-        If tootp doesn't work properly it's probably because of something I did.
-        <h2>Future directions</h2> I'm thinking of adding key stretching, maybe from here: <a href="http://ricmoo.github.io/scrypt-js/">scrypt-js</a>
+            <h2>Credits</h2> A number of libraries have been used for this:
+            <ul>
+                <li>JS-OTP library from Allan Jiang</li>
+                <li>JSchacha20 library from Bubelich Mykola</li>
+                <li>QR code reader by Lazar Laszlo</li>
+                <li>various snippets from Stack Overflow and gists</li>
+            </ul>
+            If tootp doesn't work properly it's probably because of something I did.
+            <h2>Future directions</h2> I'm thinking of adding key stretching, maybe from here: <a href="http://ricmoo.github.io/scrypt-js/">scrypt-js</a>
     </div>
 </body>
 
