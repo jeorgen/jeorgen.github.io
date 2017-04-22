@@ -5335,8 +5335,8 @@
     <hr>
     <button onclick="toggleSection('backup-restore')">Backup &amp; restore <span id="backup-restore-section-toggle-status">&rtrif;</span> </button>
     <div id="backup-restore-section" style="display:none">
-        <textarea id="encrypted-backup"></textarea> Copy this and paste it somewhere where you would like to save it.
-        <hr/> Update from backup:
+        <textarea id="encrypted-backup"></textarea> <br>Copy the above and paste it somewhere where you would like to save it.
+        <hr/> Update from backup:<br>
         <textarea id="restore"></textarea>
         <button id="restore-backup" onclick="restore()">Update</button>
     </div>
@@ -5353,7 +5353,7 @@
                     <td>
                         Passphrase:</td>
                     <td>
-                        <input type="text" name="newpassword" id="new-password" /> This should be long &amp; difficult to guess, for security. Max 32 chars for now. Stored: <code id="password" />"
+                        <input type="text" name="newpassword" id="new-password" /> <br>This should be long &amp; difficult to guess, for security. Max 32 chars for now. Stored: <code id="password" />"
                     </td>
                 </tr>
         </table>
