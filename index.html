@@ -5341,7 +5341,7 @@
         <button id="restore-backup" onclick="restore()">Update</button>
     </div>
     <hr>
-    <button onclick="toggleSection('credentials')">Passphrase for backup &amp; restore:<span id="credentials-section-toggle-status">&rtrif; </span></button>
+    <button onclick="toggleSection('credentials')">Passphrase for backup &amp; restore <span id="credentials-section-toggle-status">&rtrif; </span></button>
     <br> Make sure only <em>you</em> can see the screen before clicking the above button.
     <br>
     <div id="credentials-section" style="display:none">
@@ -5386,6 +5386,8 @@
             If you are afraid of exploits in the browser getting at tootp data, consider running tootp in its own browser, maybe even in an environment that does not have network access. If you are worried about local keyloggers and screen scrapers having infected your system, then run tootp on another device than the one you log in on. This is the usual way of running totp clients.</p>
         <p>However if your system is in that bad shape so that the attacker can manipulate your screen, you could still be compromised in different ways, regardless of defensive technology used.</p>
         <p>You may well want to choose a long and difficult password. It is stored in localstorage by tootp, so you do not need to re-enter it. You can always display it to see what it is and if you have configured multiple devices, chances are that you have at least one of them left in your possession at any given time. If you believe that your seeds have been compromised, you should change the password and request new seeds from the sites.</p>
+
+        <p>Consider hosting the tootp page on its own sub domain, being the only page on that sub domain, see: <a href="https://en.wikipedia.org/wiki/Same-origin_policy#Origin_determination_rules">Same-origin policy - Wikipedia</a> (local storage is supposed to follow the same rules as listed there. "Failure" is good in that table btw, for our purposes).
 
         <h2>Credits</h2> A number of libraries have been used for this:
         <ul>
