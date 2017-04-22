@@ -1,9 +1,8 @@
 <html>
 
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
- <style type="text/css" id="video-section-styles">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style type="text/css" id="video-section-styles">
     img {
         border: 0;
     }
@@ -41,8 +40,6 @@
         padding: 0;
     }
     </style>
-
-
     <style type="text/css">
     button,
     input {
@@ -292,10 +289,8 @@
     // return c.charCodeAt(0);
     // }));
     </script>
-
-   <script type="text/javascript">
-
-   // qr recognition code, I think it may be from Google?
+    <script type="text/javascript">
+    // qr recognition code, I think it may be from Google?
     var _aa = {};
     _aa._ab = function(f, e) {
         var d = qrcode.width;
@@ -2816,9 +2811,7 @@
         })
     };
     </script>
-
-
- <script type="text/javascript">
+    <script type="text/javascript">
     // QRCODE reader Copyright 2011 Lazar Laszlo
     // http://www.webqr.com
     var gCtx = null;
@@ -3063,13 +3056,6 @@
         stype = 2;
     }
     </script>
-
-
-
-
-
-
-
     <script>
     // Totp library from https://github.com/jiangts/JS-OTP/dist/jsOTP.js commit 1b1a1d9953bab6ab4056d25437c2336211751fcc
     (function() {
@@ -5236,15 +5222,22 @@
 
     }
 
-    function toggleShowCredentials() {
-        var div = document.getElementById('credentials');
-        div.style.display = div.style.display == "none" ? "block" : "none";
-    }
     function toggleVideoSection() {
         var div = document.getElementById('qr-video-section');
         div.style.display = div.style.display == "none" ? "block" : "none";
     }
-    
+
+    function toggleSection(label) {
+        var statusIndicator = document.getElementById(label + '-section-toggle-status')
+        var div = document.getElementById(label + '-section')
+        if (div.style.display === "none") {
+            div.style.display = "block"
+            statusIndicator.innerHTML = '&dtrif;'
+        } else {
+            div.style.display = "none"
+            statusIndicator.innerHTML = '&rtrif;'
+        }
+    }
 
     function changeCredentials() {
         var password = $('#new-password').value
@@ -5253,7 +5246,6 @@
 
     }
     </script>
-
     <script>
     function videoOff() {
 
@@ -5264,51 +5256,49 @@
         }
     }
 
-    function includeSeed(a){
+    function includeSeed(a) {
         $('#seed').value = a
 
     }
     </script>
-
 </head>
 
 <body>
     tootp - This is alpha software! 0.14
     <h1><b id="current-site">Site
         </b></h1>
-    <abbr></abbr>
     <div>
         <h1 id="resultCode" style="display:inline-block">Result
         </h1> <span id="time" /></div>
     <hr>
-    <div>Add new site:</div>
-    <div id="current-title" />
-    <div>
-        <table>
-            <tr>
-                <td>
-                    Title:</td>
-                <td>
-                    <input type="text" name="title" id="title" />
-                </td>
-            </tr>
-            <tr>
-                <td>Seed:</td>
-                <td>
-                    <input type="text" name="seed" id="seed" />
-                </td>
-            </tr>
-            <tr>
-                <td>&nbsp;</td>
-                <td>
-                    <button id="save" onclick="saveIt()">Save</button>
-                </td>
-            </tr>
-        </table>
-    </div>
-    <hr>
-    <button onclick="toggleVideoSection()">QR code scanning</button>
-    <div id="qr-video-section" style="display:none">
+    <button onclick="toggleSection('new-site')">Add new site: <span id="new-site-section-toggle-status">&rtrif;</span> </button>
+    <div id="new-site-section" style="display:none">
+        <div id="current-title">
+        </div>
+        <div>
+            <table>
+                <tr>
+                    <td>
+                        Title:</td>
+                    <td>
+                        <input type="text" name="title" id="title" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>Seed:</td>
+                    <td>
+                        <input type="text" name="seed" id="seed" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                    <td>
+                        <button id="save" onclick="saveIt()">Save</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <hr>
         <div id="mainbody" style="display: inline;">
             <table class="tsel" border="0" width="100%">
                 <tbody>
@@ -5333,7 +5323,7 @@
                     </tr>
                 </tbody>
             </table>
-        </div>&nbsp;
+        </div>
         <canvas id="qr-canvas" width="800" height="600" style="width: 800px; height: 600px;"></canvas>
         <button onclick="load()">Start</button>
         <button onclick="videoOff()">Stop</button>
@@ -5342,16 +5332,19 @@
     <h2>Saved sites</h2>
     <div id="sites">
     </div>
-    <hr> Encrypted backup:
-    <textarea id="encrypted-backup"></textarea> Copy this and paste it somewhere where you would like to save it.
-    <hr/> Update from backup:
-    <textarea id="restore"></textarea>
-    <button id="restore-backup" onclick="restore()">Update</button>
     <hr>
-    <button onclick="toggleShowCredentials()">Passphrase for backup &amp; restore:</button>
+    <button onclick="toggleSection('backup-restore')">Backup &amp; restore <span id="backup-restore-section-toggle-status">&rtrif;</span> </button>
+    <div id="backup-restore-section" style="display:none">
+        <textarea id="encrypted-backup"></textarea> Copy this and paste it somewhere where you would like to save it.
+        <hr/> Update from backup:
+        <textarea id="restore"></textarea>
+        <button id="restore-backup" onclick="restore()">Update</button>
+    </div>
+    <hr>
+    <button onclick="toggleSection('credentials')">Passphrase for backup &amp; restore:<span id="credentials-section-toggle-status">&rtrif; </span></button>
     <br> Make sure only <em>you</em> can see the screen before clicking the above button.
     <br>
-    <div id="credentials" style="display:none">
+    <div id="credentials-section" style="display:none">
         <table>
             <tr>
                 <td colspan="2">
@@ -5367,8 +5360,8 @@
         <button onclick="changeCredentials()">Update passphrase</button>
     </div>
     <hr>
-    <div id="help">
-        <h1>Help section</h1>
+    <button onclick="toggleSection('help')">Help section<span id="help-section-toggle-status">&rtrif; </span></button>
+    <div id="help-section" style="display:none">
         <h2>Purpose</h2> It's surprisingly difficult to backup many totp clients, such as FreeOTP, Authy or Google Authenticator. The purpose of Tootp is to be a totp client where it is easy to back up your totp site entries, and where all code is open source and included in the tootp page.
         <h2>Where data is stored</h2> All data is stored locally in your browser, in something called localstorage. If you uninstall the browser or in another way delete localstorage, your data is gone. Unless you've backed it up, see next section:
         <h2>How to backup and restore</h2> First make sure you've set a password in the "Passphrase for backup &amp; restore:" section. Then just copy the contents of the "Encrypted backup" field and store that contents somewhere, preferrably in multiple places.
@@ -5376,15 +5369,13 @@
             Restore by pasting the contents into the "Update from backup" field, and then click "Update". The backup will update your local database, it won't delete entries not present in the backup.
             <h2>Security</h2> This project is quickly cobbled together and makes no guarantees. The status of this project is "Seems to work for me but I will use one more client, such as FreeOTP to be on the safe side." All javascript is included in the page, no network access should happen after the page loads. If you load this page from your local device, then no network activity should happen at all.</p>
         <p>
-            It is recommended that you save the source of this page too as a backup at least once, so that you always have a copy of the precise execution environment for restore purposes, in case there are unintentional quirks of the encryption in tootp. Although it may seem desireable to rum tootp as a local file, in my tests it seems like local files can read each other's local storage entries.</p>
+            It is recommended that you save the source of this page too as a backup at least once, so that you always have a copy of the precise execution environment for restore purposes, in case there are unintentional quirks of the encryption in tootp. Although it may seem desireable to run tootp as a local file, in my tests it seems like local files can read each other's local storage entries.</p>
         <p>
             If you are afraid of exploits in the browser getting at tootp data, consider running tootp in its own browser, maybe even in an environment that does not have network access. If you are worried about local keyloggers and screen scrapers having infected your system, then run tootp on another device than the one you log in on. This is the usual way of running totp clients.</p>
         <p>However if your system is in that bad shape so that the attacker can manipulate your screen, you could still be compromised in different ways, regardless of defensive technology used.</p>
-        <p>You may well want to choose a long and difficult password. You can always display it to see what it is and if you have configured multiple devices, chances are that you have at least one of them left in your possession at any given time. If you believe that your seeds have been compromised, you should change the password and request new seeds from the sites.</p>
-
-        <h2>Using the QR scanner</h2> 
+        <p>You may well want to choose a long and difficult password. It is stored in localstorage by tootp, so you dot need to re-enter it. You can always display it to see what it is and if you have configured multiple devices, chances are that you have at least one of them left in your possession at any given time. If you believe that your seeds have been compromised, you should change the password and request new seeds from the sites.</p>
+        <h2>Using the QR scanner</h2>
         <p>Open the scanner by clicking at the "QR Code Scanning" button. Click the "Start" button to start scanning. When the scanner finds a qr code, it will automatically put it into the "Seed" field at the top. Click "Stop" to stop scanning. The only way to turn the camera off completely as of now, is to reload the page.</p>
-
         <h2>Credits</h2> A number of libraries have been used for this:
         <ul>
             <li>JS-OTP library from Allan Jiang</li>
