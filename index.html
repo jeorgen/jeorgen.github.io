@@ -43,7 +43,7 @@
     button.section-controller {
         width: 100%;
         text-align: left;
-        margin-bottom:10px
+        margin-bottom: 10px
     }
     
     button>span.toggle-status {
@@ -54,10 +54,15 @@
         margin-bottom: 12px;
         line-height: 200%
     }
-
+    
     #sites {
         padding-left: 8px
-
+    }
+    
+    div.section {
+        -webkit-transition: display 2s;
+        /* Safari */
+        transition: display 2s;
     }
     </style>
     <style type="text/css">
@@ -308,6 +313,53 @@
     // var b642ua = new Uint8Array(atob(yourBase64EncodedString).split("").map(function(c) {
     // return c.charCodeAt(0);
     // }));
+
+    /*
+        Copy text from any appropriate field to the clipboard
+      By Craig Buckler, @craigbuckler
+      use it, abuse it, do whatever you like with it!
+    */
+    (function() {
+
+        'use strict';
+
+        // click events
+        document.addEventListener('click', copy, true);
+
+        // event handler
+        function copy(e) {
+
+            // find target element
+            var
+                t = e.target,
+                c = t.dataset.copytarget,
+                inp = (c ? document.querySelector(c) : null);
+
+            // is element selectable?
+            if (inp && inp.select) {
+
+                // select text
+                inp.select();
+
+                try {
+                    // copy text
+                    document.execCommand('copy');
+                    inp.blur();
+
+                    // copied animation
+                    t.classList.add('copied');
+                    setTimeout(function() {
+                        t.classList.remove('copied');
+                    }, 1500);
+                } catch (err) {
+                    alert('please press Ctrl/Cmd+C to copy');
+                }
+
+            }
+
+        }
+
+    })();
     </script>
     <script type="text/javascript">
     // qr recognition code, I think it may be from Google?
@@ -5291,7 +5343,7 @@
         <h1 id="resultCode" style="display:inline-block">Result
         </h1> <span id="time" /></div>
     <button class="section-controller" onclick="toggleSection('new-site')">Add new site: <span class="toggle-status" id="new-site-section-toggle-status">&rtrif;...</span> </button>
-    <div id="new-site-section" style="display:none">
+    <div id="new-site-section" class="section" style="display:none">
         <div id="current-title">
         </div>
         <div>
@@ -5351,9 +5403,9 @@
     <div id="sites">
     </div>
     <button class="section-controller" onclick="toggleSection('backup-restore')">Backup &amp; restore <span class="toggle-status" id="backup-restore-section-toggle-status">&rtrif;...</span> </button>
-    <div id="backup-restore-section" style="display:none">
+    <div id="backup-restore-section" class="section" style="display:none">
         <textarea id="encrypted-backup"></textarea>
-        <br>Copy the above and paste it somewhere where you would like to save it.
+        <br>Copy the above and paste it somewhere where you would like to save it. <button data-copytarget="#encrypted-backup">copy</button>
         <hr/> Update from backup:
         <br>
         <textarea id="restore"></textarea>
@@ -5362,7 +5414,7 @@
     <button class="section-controller" onclick="toggleSection('credentials')">Passphrase for backup &amp; restore <span class="toggle-status" id="credentials-section-toggle-status">&rtrif;...</span></button>
     <br> Make sure only <em>you</em> can see the screen before clicking the above button.
     <br>
-    <div id="credentials-section" style="display:none">
+    <div id="credentials-section" class="section" style="display:none">
         <table>
             <tr>
                 <td colspan="2">
@@ -5379,7 +5431,7 @@
         <button onclick="changeCredentials()">Update passphrase</button>
     </div>
     <button class="section-controller" onclick="toggleSection('help')">Help section <span class="toggle-status" id="help-section-toggle-status">&rtrif;...</span></button>
-    <div id="help-section" style="display:none">
+    <div id="help-section" class="section" style="display:none">
         <h2>Purpose</h2> It's surprisingly difficult to backup many totp clients, such as FreeOTP, Authy or Google Authenticator. The purpose of Tootp is to be a totp client where it is easy to back up your totp site entries, and where all code is open source and included in the tootp page.
         <h2>Where data is stored</h2> All data is stored locally in your browser, in something called localstorage. If you uninstall the browser or in another way delete localstorage, your data is gone. Unless you've backed it up, see next section:
         <h2>How to backup and restore</h2> First make sure you've set a password in the "Passphrase for backup &amp; restore:" section. Then just copy the contents of the "Encrypted backup" field and store that contents somewhere, preferrably in multiple places.
@@ -5410,6 +5462,7 @@
                 <li>JS-OTP library from Allan Jiang</li>
                 <li>JSchacha20 library from Bubelich Mykola</li>
                 <li>QR code reader by Lazar Laszlo</li>
+                <li>Copy script by Craig Buckler</li>
                 <li>various snippets from Stack Overflow and gists</li>
             </ul>
             If tootp doesn't work properly it's probably because of something I did.
