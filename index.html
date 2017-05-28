@@ -1,12 +1,24 @@
+<!DOCTYPE html>
 <html>
-
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style type="text/css" id="video-section-styles">
+    .align-left {
+    float: left;
+}
+.align-right {
+    float: right;
+}
+.logo {
+    text-align: right
+}
     img {
         border: 0;
     }
-    
+    img#logo {
+        vertical-align: top;
+
+    }
     #mainbody {
         background: white;
         width: 100%;
@@ -5126,6 +5138,13 @@
     document.addEventListener('DOMContentLoaded', function() {
         setInterval(timeLeft, 1000)
         displayTitles()
+        if (typeof(process) !== 'undefined'){
+$("#electron-status").innerHTML = 'Running under Electron'
+        } 
+        else {
+$("#electron-status").innerHTML = 'NOT running under Electron'
+
+        }
 
     });
     </script>
@@ -5313,7 +5332,7 @@
 
     function changeCredentials() {
         var password = $('#new-password').value
-        localStorage.setItem('password', password)
+        localStorage.setItem('password', password.normalize('NFKC'))
         displayTitles()
 
     }
@@ -5329,6 +5348,7 @@
     }
 
     function includeSeed(a) {
+      // TODO: Parse a and only put seed part in seed field
         $('#seed').value = a
 
     }
@@ -5336,12 +5356,54 @@
 </head>
 
 <body>
-    <div style="text-align:right"><b>tootp</b> - This is alpha software! 0.14</div>
-    <h1><b id="current-site">Site
+    <div class="align-left">    <h1><b id="current-site">Site
         </b></h1>
-    <div>
+
+            <div>
         <h1 id="resultCode" style="display:inline-block">Result
-        </h1> <span id="time" /></div>
+        </h1> <span id="time" /></div></div>
+        <div class="align-right"><div class="logo"><img id="logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEYAAAAvCAMAAABpC0wkAAAC/VBMVEUAAQABBAAABQkDBQELBAMF
+CAQOBwUFCw4KDQkIDhALEBMOEA0TEBQQFBYSFBEVFhQTFxkWGRsYGhgZHB4ZICYYIiIhIiAXJSoj
+JSIcJycaKC0mKCUgKzUgLTIqLCkuMC0kMjcnNToyMzE0NjMsOT86PDkwPkMyQEU1Q0gyRE47QkhB
+Q0A1RlE4RkswSVI3SVNFR0Q7SU9BSE8zTFU5S1VESUs0TlY8TlhGTVRLTUpBT1VKTlA5Uls/UVtP
+UU5CVF88Vl9NVFtPVFY/WWJUVVNBWmM9W2lSV1lTV1pWV1VMW2FEXmdXW11ZW1hTXl9OYGtIYmta
+X2FKZG1HZXRNZ3BhY2BXZWtUZ3FLaXhdZWxObHtSbHVkaWtoamdRb35uaWhVb3lTcYBpbXBxbWtj
+cnhucG1adX5YdoVldHpuc3VaeIdtdHxeeIFceolmeINpeH5he4V1d3RefYx0eXtZgI5zeoJtfIJh
+gI53fH5mgIpwf4VjgpGCfXxlhJNphI17gINjhppoh5Z+g4aBg4BjipduiJJqiZhljJmFh4RxjJVu
+jZyMh4aEiYx8i5GIiodpkZ5xkJ+BjY5nk6ZslKGJjpGSjIuPjZFqlqmNj4xvlqR2laSEk5mPkY5w
+mKWQlZd7mqpxnbCUlpN1naucl5V4oK52orWXnJ58o7F4pLedn5x/prR6p7qboKJ8qLygop9/q7+i
+pKGDq7moo6KkpqOCrsKEsMStp6aoqqaFssWmq66KssCHs8eqrKmAtsiwq6qJtcmwrrKKt8q0rq2w
+sq+Nus2Pu8+IvdCwtbeQvdG0trKSvtKLwdOTwNS9t7aNw9WVwdW1ur2Rw9yPxdeWw9eQxtiTxd67
+vbqNx9+Rx9mYxdmSyNuax9uTydyPyuKbyNyQy+OXyeOVy92+w8bBw8CXzd+TzuaZz+GV0Oma0OLL
+xcSY0+ub1u7KzMmg1uig2/PU1tPZ29fh29rj4eXn4uDi5+rl5+Ts5+Xn6ebp6+jx6+ru8O32+PT5
++/j7/fr+//zbp4zaAAAAAXRSTlMAQObYZgAAAAFiS0dEAIgFHUgAAAAJcEhZcwAACxMAAAsTAQCa
+nBgAAAAHdElNRQfhBRoULhmSy/BMAAAE4ElEQVRIx72Wf1RURRTH93Q7CRb+IEuC8gcpP8LaUAOh
+TOVIlpURYdoPVykQNQiUaqOEolCLCiqs0FpTEgEBNwtiaytb3F2OryMvlqGdPZ51fbKriVn2AxYQ
+32nee7v8ePuAVjvdf2Zn9nw/c9+dO3euTPZf2+9P3rowPvqpy4McWGtsxcRMhrw9wkrDsiz1jxRF
+6VQr7v2BX+mOSy/ZuvSDESgpaoxchrUvEEV2mdaGhTWMbXU7M8/Ivi2xWc2YMRR+ORxlaT+EM9ua
+fZtOt6Eh5nj/vRxG+GmtbpCmzLYM1ZhX6pCH2RV7XZvhg5KUXVgssSqxJwepn3CvxkpQfs31EOA0
+hwQG1+UK32XRH/bErDvtITheLOUNQsW7XdF7x4Pi/EhqY0kKMq91hTndA3Mng4axY3gwDZ8gM5wg
+TF7tEmPeFe+sn5HPDacSAkO3mvsh8rBYORkKsSLEiFDlUfE3GcROHAIFN+QqfjvXMZAJ5WfPniKz
+Wp0c9AhpvhBhaoxijF7AWLXTwK+g3xv12DEq4jeVGAUUQvVfiTAPiCnbJoNfYOB1hmbIngIQIiy2
+qWJ8AOrNyDrBFyYH3nDbmfaghj1BPv73uTNYHBpVCASGh4cYb+xl+wCggv/fHseyqeBLIzxpIoSG
+h86SHYEYWP56BAQLmDAsHZvmiSx70R9gAvd/S34VyzYAlCEcGUViY84hGOgk8sVQxGNuGQ4DfWwv
++ZBruOuFF069cCECINqG5RyG+ZhgAng93CwdGzdmjM9U8k1Q9A05dGY68HaHAy+YSzB0I8Fs5PVB
+4/lhn1EaQ48VlOwW4q59kjBZjTWqOaC33C8jmFJeH+wzct5M44URbDrJcvu1/KRqtbWcIXmDazhM
+Kq8P8HdlsVmE0cHj3LD3SiK8nu3jstx2E0eZwi45l4yiwJAn4zCCHmYKmDibOP2umM7f4rdLb/+c
+Zf/UcJUh4SqAYPZiFrUBrQRVFY+BI2SYCQdcmSO+4SaytZ8vQnWbWZbtTeKIjOFpp5Nlj2pIHaoG
+GDd+OcE8CDEbgyDGncfPe9SbAnnIDJJpdS/t2r7JjjRpSmVZWSnLfp9hf5mcmjJ18d1FBPPJ+YCr
+x73Rfx160tqGqRTYQYqgubgD2xL3H7orurYt3oJ1bzbyKvdJDVgTZUEjWvNcHc4oMCO63JRUtUyx
+SBoj2948SPNLpYRbFqY+bH5C4tfOtz4lr+ISojnsiZG9qHH7g79b0yzhD7OhxO7AO/KVWpIehg+5
+t3pVu2dZf62cL5gYqRRD7hhWC0neMlBpceUzw7++nbMPmmh6W7QoSmkLPMLWVv3waA3BjuOimGTh
+wgqr6MnAO0eh1FDirWsxViVXnHYwVpvDYavOyMkhKbB+FMw8s8Qh4Y7dkbOe3ZKXuX4z9xykVIxG
+6QkTBcKkpfT78+PlxfFedFvBpYtElbBVq9HqDCRRHvu3kFVV5L42GaWzmD7pXetWNtQd2n0Z/vYO
+k20YDMBZrpPTO73sJFM6BGE+14FYHzLxmYLru73tSNfZeYw2mcNEHiN1IgkjutPrzvbRuhMchmtA
+mDnEk1zyTrWc9L5DblxBUbQ6nmCoJJqaz9/Y2EtptbubXsnOJHL1Z03OPx6x21uV87ousWs/n1Tw
+3D38r59/au+6jPb/rx7Z/23/AHpgPmfzR1ymAAAAAElFTkSuQmCC"/></div>
+<b>tootp</b> - This is alpha software! 0.14</div>
+<div style="clear: both;"></div>
+
+
     <button class="section-controller" onclick="toggleSection('new-site')">Add new site: <span class="toggle-status" id="new-site-section-toggle-status">&rtrif;...</span> </button>
     <div id="new-site-section" class="section" style="display:none">
         <div id="current-title">
@@ -5469,6 +5531,7 @@
             If tootp doesn't work properly it's probably because of something I did.
             <h2>Future directions</h2> I'm thinking of adding key stretching, maybe from here: <a href="http://ricmoo.github.io/scrypt-js/">scrypt-js</a>
     </div>
+    <div id="electron-status"></div>
 </body>
 
 </html>
