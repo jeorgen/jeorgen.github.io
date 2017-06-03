@@ -5813,7 +5813,7 @@
             var encrypted = {
                 cryptoText: cryptResult.cryptoText,
                 keyStretchFactor: scryptParams,
-                keyStretchMethod: 'Scrypt',
+                keyStretchMethod: 'scrypt',
                 cipher: 'chacha20',
                 nonce: cryptResult.nonce
             }
@@ -6154,12 +6154,19 @@ mDnEk1zyTrWc9L5DblxBUbQ6nmCoJJqaz9/Y2EtptbubXsnOJHL1Z03OPx6x21uV87ousWs/n1Tw
             Restore by pasting the contents into the "Update from backup" field, and then click "Update". The backup will update your local database, it won't delete entries not present in the backup.</p>
         <p>
             This is what a backup looks like:
-            <pre>{
-  "cryptoText": "appgSvENGiJc7OWCzSGGIdNl++==",
-  "keyStretchFactor": 0,
-  "keyStretchMethod": "none",
+            <pre>
+{
+  "cryptoText": "Cpl3aA979MF8sbDgXJhqlQxJk4Wv6QKVMdtxLgTNoGwsa3",
+  "keyStretchFactor": {
+    "logN": 16,
+    "r": 8,
+    "p": 1,
+    "dkLen": 32,
+    "encoding": "hex"
+  },
+  "keyStretchMethod": "scrypt",
   "cipher": "chacha20",
-  "nonce": "9SCp7BHwwUY8c9Q8"
+  "nonce": "30bc02549c74cf7b8d92b9f1"
 }</pre>
             <p>The password in tootp needs to be the same at the moment of restoring as it was when the backup was made.
             </p>
