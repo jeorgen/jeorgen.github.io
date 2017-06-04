@@ -23,6 +23,8 @@
     
     img#logo {
         vertical-align: top;
+        padding-top: 6px;
+        padding-right: 3px;
     }
     
     #mainbody {
@@ -5826,7 +5828,7 @@
         $('#stretched-password').innerHTML = localStorage.getItem('password')
         $('#new-password').value = localStorage.getItem('clearTextPassword')
         var foo = dbkeys.map(function(key) {
-            $('#sites').innerHTML = $('#sites').innerHTML + '<div class="site"><button class="title" onclick="displayIt(\'' + key + '\')">' + key + '</button><button class="title" onclick="deleteIt(\'' + key + '\')">x</button> </div>'
+            $('#sites').innerHTML = $('#sites').innerHTML + '<div class="site"><button class="title" onclick="displayIt(\'' + key + '\')">' + key.substring(7) + '</button><button class="title" onclick="deleteIt(\'' + key + '\')">x</button> </div>'
             return key
         })
 
@@ -5890,7 +5892,7 @@
         console.log('Displaying title ' + title)
         var seed = localStorage.getItem(title)
             // console.log("SEED IS: "+ seed)
-        currentSite.title = title
+        currentSite.title = title.substring(7)
         currentSite.seed = seed
         scroll(0, 0) // Get 2 factor code into view
     }
@@ -5921,7 +5923,7 @@
             }
 
         } else {
-            $("#resultCode").innerHTML = 'no site selected'
+            $("#resultCode").innerHTML = 'none'
 
         }
     }
@@ -6053,7 +6055,7 @@ wgqr6MnAO0eh1FDirWsxViVXnHYwVpvDYavOyMkhKbB+FMw8s8Qh4Y7dkbOe3ZKXuX4z9xykVIxG
 k20YDMBZrpPTO73sJFM6BGE+14FYHzLxmYLru73tSNfZeYw2mcNEHiN1IgkjutPrzvbRuhMchmtA
 mDnEk1zyTrWc9L5DblxBUbQ6nmCoJJqaz9/Y2EtptbubXsnOJHL1Z03OPx6x21uV87ousWs/n1Tw
 3D38r59/au+6jPb/rx7Z/23/AHpgPmfzR1ymAAAAAElFTkSuQmCC" /></div>
-        <b>tootp</b> - This is alpha software! 0.27</div>
+        <b>tootp</b> - alpha software! 0.27</div>
     <div style="clear: both;"></div>
     <button class="section-controller" onclick="toggleSection('new-site')">Add new site: <span class="toggle-status" id="new-site-section-toggle-status">&rtrif;...</span> </button>
     <div id="new-site-section" class="section" style="display:none">
@@ -6197,7 +6199,7 @@ mDnEk1zyTrWc9L5DblxBUbQ6nmCoJJqaz9/Y2EtptbubXsnOJHL1Z03OPx6x21uV87ousWs/n1Tw
             </ul>
             Tootp is made by Jörgen Modin &lt;jorgen@webworks.se&gt;. If tootp doesn't work properly it's probably because of something I did.
     </div>
-    This instance of tootp is currently: <div id="electron-status"></div>
-</body>
+<!--     This instance of tootp is currently: <div id="electron-status"></div>
+ --></body>
 
 </html>
