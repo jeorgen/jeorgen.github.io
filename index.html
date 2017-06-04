@@ -5820,7 +5820,7 @@
             }
             $('#encrypted-backup').value = JSON.stringify(encrypted, null, '  ')
         } else {
-            $('#encrypted-backup').value = 'No nonce or password set. Please do that under "Passphrase for backup and restore" first.'
+            $('#encrypted-backup').value = 'No password set. Please do that under "Passphrase for backup and restore" first.'
         }
         $('#password').innerHTML = localStorage.getItem('clearTextPassword')
         $('#stretched-password').innerHTML = localStorage.getItem('password')
@@ -6197,7 +6197,7 @@ mDnEk1zyTrWc9L5DblxBUbQ6nmCoJJqaz9/Y2EtptbubXsnOJHL1Z03OPx6x21uV87ousWs/n1Tw
             </ul>
             Tootp is made by Jörgen Modin &lt;jorgen@webworks.se&gt;. If tootp doesn't work properly it's probably because of something I did.
     </div>
-    This page is currently: <div id="electron-status"></div>
+    This instance of tootp is currently: <div id="electron-status"></div>
 </body>
 
 </html>
