@@ -333,13 +333,6 @@
         return btoa(binstr);
     }
 
-    function bufferToBase64(buf) {
-        var binstr = Array.prototype.map.call(buf, function(ch) {
-            return String.fromCharCode(ch);
-        }).join('');
-        return btoa(binstr);
-    }
-
     function base64ToBuffer(base64) {
         var binstr = atob(base64);
         var buf = new Uint8Array(binstr.length);
@@ -348,11 +341,6 @@
         });
         return buf;
     }
-
-    // var ua2b64 = btoa(String.fromCharCode.apply(null, yourUint8Array));
-    // var b642ua = new Uint8Array(atob(yourBase64EncodedString).split("").map(function(c) {
-    // return c.charCodeAt(0);
-    // }));
 
     /*
         Copy text from any appropriate field to the clipboard
@@ -5750,8 +5738,7 @@
         module.exports = JSChaCha20
     }
     </script>
-    <script>
-    </script>
+
     <script>
     // Lightweight replacement for jQuery selectors
     window.$ = function(s) {
@@ -5793,12 +5780,10 @@
     function displayTitles() {
         var dbkeys = getStorageKeys()
         console.log('Storage keys are ' + JSON.stringify(dbkeys))
-            // $("#sites").empty();
         $("#sites").innerHTML = ''
 
         if (dbkeys.length === 0) {
             $('#sites').innerHTML = '<div>No sites</div>'
-                // return
         }
         var items = dbkeys.map(function(title) {
             return {
@@ -5835,7 +5820,6 @@
     }
 
     function makeEncrypted(text) {
-        // const key = new str2ab(localStorage.getItem('password'), 32)
         const key = decodeHexStringToByteArray(localStorage.getItem('password'))
         const nonce = decodeHexStringToByteArray(localStorage.getItem('nonce'))
         const data = new str2ab(text, 'textLength')
@@ -5845,7 +5829,6 @@
 
         const encr = encoder.encrypt(data)
         const decr = decoder.decrypt(encr)
-            // console.log(ab2str(decr))
         return {
             cryptoText: bufferToBase64(encr),
             nonce: encodeByteArrayToHexString(nonce)
@@ -5857,7 +5840,6 @@
         const cryptoText = new base64ToBuffer(inText)
         const decoder = new JSChaCha20(key, nonce)
         const decr = decoder.decrypt(cryptoText)
-            // console.log(ab2str(decr))
         return ab2str(decr)
     }
 
@@ -5891,7 +5873,6 @@
     function displayIt(title) {
         console.log('Displaying title ' + title)
         var seed = localStorage.getItem(title)
-            // console.log("SEED IS: "+ seed)
         currentSite.title = title.substring(7)
         currentSite.seed = seed
         scroll(0, 0) // Get 2 factor code into view
@@ -5913,7 +5894,6 @@
         $("#time").innerHTML = (30 - Math.round(d.getTime() / 1000) % 30)
         var totp = new jsOTP.totp();
         if (currentSite.seed) {
-            // console.log("IN CURRENT SITE WITH: " + JSON.stringify(currentSite))
             var timeCode = totp.getOtp(currentSite.seed)
             $("#current-site").innerHTML = currentSite.title
 
@@ -5986,7 +5966,7 @@
             $('#stretching-status').innerHTML = "Key stretching done!"
 
             displayTitles()
-            console.log(derivedKey); // "5012b74fca8ec8a4a0a62ffdeeee959d"
+            console.log(derivedKey)
         });
     }
     </script>
@@ -6001,7 +5981,7 @@
     }
 
     function includeSeed(a) {
-        // TODO: Parse a and only put seed part in seed field
+        // TODO: Parse and only put seed part in seed field
         $('#seed').value = a
 
     }
@@ -6145,13 +6125,12 @@ mDnEk1zyTrWc9L5DblxBUbQ6nmCoJJqaz9/Y2EtptbubXsnOJHL1Z03OPx6x21uV87ousWs/n1Tw
                         <div id="stretching-status"></div>
                     </td>
                 </tr>
-                <tr><td></td><td></td>
         </table>
         
     </div>
     <button class="section-controller" onclick="toggleSection('help')">Help section <span class="toggle-status" id="help-section-toggle-status">&rtrif;...</span></button>
     <div id="help-section" class="section" style="display:none">
-        <h2>Purpose</h2> It's surprisingly difficult to backup many totp clients, such as FreeOTP, Authy or Google Authenticator. The purpose of Tootp is to be a totp client where it is easy to back up your totp site entries, and where all code is open source and included in the tootp page.
+        <h2>Purpose</h2> tootp is meant to be used for 2 factor authentication, with the popular <em>totp</em> method, where you at first get a seed code from the web site when you enable 2 factor authentication, and then you are supposed to enter an authentication code at each login, and what that authentication code is changes every 30 seconds. It's surprisingly difficult to backup many totp clients, such as FreeOTP, Authy or Google Authenticator. The purpose of Tootp is to be a totp client where it is easy to back up your totp site entries, and where all code is open source and included in the tootp page.
         <h2>Where data is stored</h2> All data is stored locally in your browser, in something called localstorage. If you uninstall the browser or in another way delete localstorage, your data is gone. Unless you've backed it up, see next section:
         <h2>How to backup and restore</h2> First make sure you've set a password in the "Passphrase for backup &amp; restore:" section. Then just copy the contents of the "Encrypted backup" field and store that contents somewhere, preferrably in multiple places.
         <p>
@@ -6180,7 +6159,7 @@ mDnEk1zyTrWc9L5DblxBUbQ6nmCoJJqaz9/Y2EtptbubXsnOJHL1Z03OPx6x21uV87ousWs/n1Tw
             This project is quickly cobbled together and makes no guarantees. The status of this project is "Seems to work for me but I will use one more client, such as FreeOTP to be on the safe side." All javascript is included in the page, no network access should happen after the page loads. If you load this page from your local device, then no network activity should happen at all.</p>
             <p>All seeds and the password are stored in cleartext in localstorage in your browser.</p>
         <p>
-            It is recommended that you save the source of this page as a backup, so that you always have a copy of the precise execution environment for restore purposes, in case there are unintentional quirks of the encryption in tootp. Although it may seem desireable to run tootp as a local file, in my tests it seems like local files can read each other's local storage entries.</p>
+            It is recommended that you save the source of this page as a backup, so that you always have a copy of the precise execution environment for restore purposes, in case there are unintentional quirks of the encryption in tootp. Beware that if you run tootp as a local file, in my tests it seems like locally opened files share and hence can read each other's local storage entries.</p>
         <p>
             If you are afraid of exploits in the browser getting at tootp data, consider running tootp in its own browser, maybe even in an environment that does not have network access. If you are worried about local keyloggers and screen scrapers having infected your system, then run tootp on another device than the one you log in on. This is the usual way of running totp clients.</p>
         <p>However if your system is in that bad shape so that the attacker can manipulate your screen, you could still be compromised in different ways, regardless of defensive technology used.</p>
@@ -6197,7 +6176,7 @@ mDnEk1zyTrWc9L5DblxBUbQ6nmCoJJqaz9/Y2EtptbubXsnOJHL1Z03OPx6x21uV87ousWs/n1Tw
                 <li>Copy script by Craig Buckler</li>
                 <li>various snippets from Stack Overflow and gists</li>
             </ul>
-            Tootp is made by Jörgen Modin &lt;jorgen@webworks.se&gt;. If tootp doesn't work properly it's probably because of something I did.
+            Tootp is made by Jörgen Modin &lt;jorgen@webworks.se&gt;.
     </div>
 <!--     This instance of tootp is currently: <div id="electron-status"></div>
  --></body>
