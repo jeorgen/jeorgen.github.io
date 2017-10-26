@@ -5923,6 +5923,7 @@
         var key = decodeHexStringToByteArray(localStorage.getItem('password'))
         var JSONtext = JSON.parse($("#restore").value)
         localStorage.setItem('nonce', JSONtext.nonce)
+        changeCredentials()
         var clearText = decrypt(JSONtext.cryptoText, key, decodeHexStringToByteArray(JSONtext.nonce))
         console.log("RESTORED IS: " + clearText)
         var data = JSON.parse(clearText) // if this borks, something went wrong
