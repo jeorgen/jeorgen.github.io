@@ -5966,6 +5966,29 @@
         }
 
         function saveIt() {
+            return Promise.resolve(getSite()).then(checkValidSite).then(storeSite).then(displayTitles).catch(
+                errorHandler)
+        }
+
+        function getSite() {
+            var site = {}
+            site.title = $('#title').value
+            site.seed = $('#seed').value
+            return site
+        }
+
+        function checkValidSite(site) {
+            // console.log('site is ' + site +'in checkvalid')
+            seedValid(site.seed)
+            return site
+        }
+
+        function storeSite(site) {
+            localStorage.setItem('Title: ' + site.title, site.seed)
+            return site
+        }
+
+        function oldSaveIt() {
             var title = $('#title').value
             var seed = $('#seed').value
             if (!seedValid(seed)) {
@@ -5981,15 +6004,9 @@
         }
 
         function seedValid(seed) {
-            try {
-                var totp = new jsOTP.totp();
-                totp.getOtp(seed)
-            } catch (e) {
-                console.log('Seed not valid')
-                return false
-            }
-            return true
-
+            var totp = new jsOTP.totp();
+            console.log('Seed is ' + seed + 'in seedValid')
+            totp.getOtp(seed)
         }
 
         function displayIt(title) {
@@ -6081,6 +6098,7 @@
 
         function errorHandler(err) {
             console.log("ERROR" + err)
+            console.log(err.stack)
         }
 
         function toggleVideoSection() {
