@@ -6042,21 +6042,45 @@
         }
 
         function restore() {
-            var key = decodeHexStringToByteArray(localStorage.getItem('password'))
-            var JSONtext = JSON.parse($("#restore").value)
-            localStorage.setItem('nonce', JSONtext.nonce)
-            changeCredentials()
-            var clearText = decrypt(JSONtext.cryptoText, key, decodeHexStringToByteArray(JSONtext.nonce))
-            console.log("RESTORED IS: " + clearText)
-            var data = JSON.parse(clearText) // if this borks, something went wrong
-            // var sites = Object.keys(data.sites)
-            for (i = 0; i < data.sites.length; i++) {
-                console.log(data.sites[i].title, data.sites[i].seed)
-                localStorage.setItem(data.sites[i].title, data.sites[i].seed)
-            }
-            $("#restore").value = ""
-            displayTitles()
+            return Promise.resolve(getBackup()).then(updateNonce).then(decryptBackup).then(
+                logResult).then(updateStoredSites).then(displayTitles).catch(errorHandler)
+        }
 
+        function getBackup() {
+            return JSON.parse($("#restore").value)
+        }
+
+        function updateNonce(backup) {
+            localStorage.setItem('nonce', backup.nonce)
+            $('#new-password').value
+            return backup
+        }
+
+        function updateCredentials(backup) {
+            return Promise.resolve(performStretch(backup.password)).then(storeCredentials).then(() => backup)
+        }
+
+        function decryptBackup(backup) {
+            console.log('in decrypt backup')
+            var key = decodeHexStringToByteArray(localStorage.getItem('password'))
+            var clearText = decrypt(backup.cryptoText, key, decodeHexStringToByteArray(backup.nonce))
+            return JSON.parse(clearText)
+        }
+
+        function logResult(result) {
+            console.log("Log: " + result)
+            return result
+        }
+
+        function updateStoredSites(decryptedBackup) {
+            for (i = 0; i < decryptedBackup.sites.length; i++) {
+                console.log(decryptedBackup.sites[i].title, decryptedBackup.sites[i].seed)
+                localStorage.setItem(decryptedBackup.sites[i].title, decryptedBackup.sites[i].seed)
+            }
+        }
+
+        function errorHandler(err) {
+            console.log("ERROR" + err)
         }
 
         function toggleVideoSection() {
@@ -6080,9 +6104,6 @@
             return Promise.resolve(getPassword()).then(performStretch).then(storeCredentials).then(displayTitles).catch(
                 console.log)
         }
-
-
-
 
         const promisifiedScrypt = (clearTextPassword, keyStretchNonce, scryptParams) =>
             new Promise((resolve, reject) => {
