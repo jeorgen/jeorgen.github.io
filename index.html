@@ -296,6 +296,8 @@
         }
     </style>
     <script>
+
+        // utility functions
         function ab2str(buf) {
             // return String.fromCharCode.apply(null, new Uint16Array(buf));
             return new TextDecoder("utf-8").decode(buf);
@@ -341,7 +343,9 @@
             });
             return buf;
         }
+        // end utility functions
 
+        // Begin other people's code
         /*
             Copy text from any appropriate field to the clipboard
           By Craig Buckler, @craigbuckler
@@ -5868,8 +5872,11 @@
             }[s[0]];
             return document[c ? 'getElement' + c : 'querySelectorAll'](s.slice(1))
         };
+        // End other people's code
     </script>
+
     <script>
+        // initialization code
         var currentSite = {}
         var scryptParams = {
             logN: 16,
@@ -5879,12 +5886,10 @@
             encoding: 'hex'
         }
         localStorage.setItem('nonce', encodeByteArrayToHexString(crypto.getRandomValues(new Uint8Array(12))))
-        console.log(localStorage.getItem('nonce'))
-
 
         document.addEventListener('DOMContentLoaded', function () {
             setInterval(timeLeft, 1000)
-            displayTitles()
+            updateUI()
             if (typeof (process) !== 'undefined') {
                 $("#electron-status").innerHTML = 'Running under Electron'
             } else {
@@ -5893,9 +5898,65 @@
             }
 
         });
+        // end initialization code
     </script>
     <script>
-        function displayTitles() {
+        // user interface triggered functions
+        function saveIt() {
+            return Promise.resolve(getSite()).then(checkValidSite).then(storeSite).then(updateUI).catch(
+                errorHandler)
+        }
+
+        function deleteIt(title) {
+            var ok = confirm("Deleting " + title + " is OK?")
+            if (!ok) {
+                return
+            }
+            console.log('Deleting title ' + title)
+            var seed = localStorage.removeItem(title)
+            updateUI()
+        }
+
+        function changeCredentials() {
+            return Promise.resolve(getPassword()).then(performStretch).then(storeCredentials).then(updateUI).catch(
+                errorHandler)
+        }
+
+        function restore() {
+            return Promise.resolve(getBackup()).then(updateNonce).then(decryptBackup).then(
+                logResult).then(updateStoredSites).then(updateUI).catch(errorHandler)
+        }
+
+        function toggleVideoSection() {
+            var div = document.getElementById('qr-video-section');
+            div.style.display = div.style.display == "none" ? "block" : "none";
+        }
+
+        function toggleSection(label) {
+            var statusIndicator = document.getElementById(label + '-section-toggle-status')
+            var div = document.getElementById(label + '-section')
+            if (div.style.display === "none") {
+                div.style.display = "block"
+                statusIndicator.innerHTML = '&dtrif;'
+            } else {
+                div.style.display = "none"
+                statusIndicator.innerHTML = '&rtrif;...'
+            }
+        }
+
+        // end user interface triggered functions
+
+        // functions that update the UI
+
+        function displayIt(title) {
+            console.log('Displaying title ' + title)
+            var seed = localStorage.getItem(title)
+            currentSite.title = title.substring(7)
+            currentSite.seed = seed
+            scroll(0, 0) // Get 2 factor code into view
+        }
+
+        function updateUI() {
             var dbkeys = getStorageKeys()
             console.log('Storage keys are ' + JSON.stringify(dbkeys))
             $("#sites").innerHTML = ''
@@ -5938,94 +5999,6 @@
                     '\')">x</button> </div>'
                 return key
             })
-
-        }
-
-        function makeEncrypted(text) {
-            const key = decodeHexStringToByteArray(localStorage.getItem('password'))
-            const nonce = decodeHexStringToByteArray(localStorage.getItem('nonce'))
-            const data = new str2ab(text, 'textLength')
-
-            const encoder = new JSChaCha20(key, nonce)
-            const decoder = new JSChaCha20(key, nonce)
-
-            const encr = encoder.encrypt(data)
-            const decr = decoder.decrypt(encr)
-            return {
-                cryptoText: bufferToBase64(encr),
-                nonce: encodeByteArrayToHexString(nonce)
-            }
-        }
-
-        function decrypt(inText, key, nonce) {
-            console.log(nonce)
-            const cryptoText = new base64ToBuffer(inText)
-            const decoder = new JSChaCha20(key, nonce)
-            const decr = decoder.decrypt(cryptoText)
-            return ab2str(decr)
-        }
-
-        function saveIt() {
-            return Promise.resolve(getSite()).then(checkValidSite).then(storeSite).then(displayTitles).catch(
-                errorHandler)
-        }
-
-        function getSite() {
-            var site = {}
-            site.title = $('#title').value
-            site.seed = $('#seed').value
-            return site
-        }
-
-        function checkValidSite(site) {
-            // console.log('site is ' + site +'in checkvalid')
-            seedValid(site.seed)
-            return site
-        }
-
-        function storeSite(site) {
-            localStorage.setItem('Title: ' + site.title, site.seed)
-            return site
-        }
-
-        function oldSaveIt() {
-            var title = $('#title').value
-            var seed = $('#seed').value
-            if (!seedValid(seed)) {
-                alert('Seed ' + seed + " not in a correct format for site " + title + ". Entry not saved ")
-                return
-            }
-            localStorage.setItem('Title: ' + title, seed)
-
-            $('#title').value = ""
-            $('#seed').value = ""
-            displayTitles()
-
-        }
-
-        function seedValid(seed) {
-            var totp = new jsOTP.totp();
-            console.log('Seed is ' + seed + 'in seedValid')
-            totp.getOtp(seed)
-        }
-
-        function displayIt(title) {
-            console.log('Displaying title ' + title)
-            var seed = localStorage.getItem(title)
-            currentSite.title = title.substring(7)
-            currentSite.seed = seed
-            scroll(0, 0) // Get 2 factor code into view
-        }
-
-        function deleteIt(title) {
-            var ok = confirm("Deleting " + title + " is OK?")
-            if (!ok) {
-                return
-            }
-            console.log('Deleting title ' + title)
-            var seed = localStorage.removeItem(title)
-            displayTitles()
-
         }
 
         function timeLeft() {
@@ -6047,6 +6020,31 @@
             }
         }
 
+        // end functions that update the UI
+
+        // accessors for UI elements
+
+        function getSite() {
+            var site = {}
+            site.title = $('#title').value
+            site.seed = $('#seed').value
+            return site
+        }
+
+        function getBackup() {
+            return JSON.parse($("#restore").value)
+        }
+
+        function getPassword() {
+            return $('#new-password').value.normalize('NFKC')
+        }
+
+        // database functions
+        function storeSite(site) {
+            localStorage.setItem('Title: ' + site.title, site.seed)
+            return site
+        }
+
         function getStorageKeys() {
             var dbkeys = []
 
@@ -6058,23 +6056,56 @@
             return dbkeys
         }
 
-        function restore() {
-            return Promise.resolve(getBackup()).then(updateNonce).then(decryptBackup).then(
-                logResult).then(updateStoredSites).then(displayTitles).catch(errorHandler)
+        function updateStoredSites(decryptedBackup) {
+            for (i = 0; i < decryptedBackup.sites.length; i++) {
+                console.log(decryptedBackup.sites[i].title, decryptedBackup.sites[i].seed)
+                localStorage.setItem(decryptedBackup.sites[i].title, decryptedBackup.sites[i].seed)
+            }
         }
 
-        function getBackup() {
-            return JSON.parse($("#restore").value)
+        function storeCredentials(credentials) {
+            localStorage.setItem('password', credentials.derivedKey)
+            localStorage.setItem('clearTextPassword', credentials.clearTextPassword)
         }
 
         function updateNonce(backup) {
             localStorage.setItem('nonce', backup.nonce)
-            $('#new-password').value
             return backup
         }
 
-        function updateCredentials(backup) {
-            return Promise.resolve(performStretch(backup.password)).then(storeCredentials).then(() => backup)
+        // end database functions
+
+        // cryptographic helper functions
+
+        function makeEncrypted(text){
+            const key = decodeHexStringToByteArray(localStorage.getItem('password'))
+            const nonce = decodeHexStringToByteArray(localStorage.getItem('nonce'))
+            return encrypt(text, key, nonce)
+        }
+
+        function encrypt(text, key, nonce) {
+
+            const data = new str2ab(text, 'textLength')
+            const encoder = new JSChaCha20(key, nonce)
+            const encr = encoder.encrypt(data)
+            return {
+                cryptoText: bufferToBase64(encr),
+                nonce: encodeByteArrayToHexString(nonce)
+            }
+        }
+
+        function decrypt(inText, key, nonce) {
+            console.log(nonce)
+            const cryptoText = new base64ToBuffer(inText)
+            const decoder = new JSChaCha20(key, nonce)
+            const decr = decoder.decrypt(cryptoText)
+            return ab2str(decr)
+        }
+
+        function checkValidSite(seed) {
+            // throws when invalid
+            var totp = new jsOTP.totp();
+            totp.getOtp(seed)
         }
 
         function decryptBackup(backup) {
@@ -6084,43 +6115,9 @@
             return JSON.parse(clearText)
         }
 
-        function logResult(result) {
-            console.log("Log: " + result)
-            return result
-        }
-
-        function updateStoredSites(decryptedBackup) {
-            for (i = 0; i < decryptedBackup.sites.length; i++) {
-                console.log(decryptedBackup.sites[i].title, decryptedBackup.sites[i].seed)
-                localStorage.setItem(decryptedBackup.sites[i].title, decryptedBackup.sites[i].seed)
-            }
-        }
-
-        function errorHandler(err) {
-            console.log("ERROR" + err)
-            console.log(err.stack)
-        }
-
-        function toggleVideoSection() {
-            var div = document.getElementById('qr-video-section');
-            div.style.display = div.style.display == "none" ? "block" : "none";
-        }
-
-        function toggleSection(label) {
-            var statusIndicator = document.getElementById(label + '-section-toggle-status')
-            var div = document.getElementById(label + '-section')
-            if (div.style.display === "none") {
-                div.style.display = "block"
-                statusIndicator.innerHTML = '&dtrif;'
-            } else {
-                div.style.display = "none"
-                statusIndicator.innerHTML = '&rtrif;...'
-            }
-        }
-
-        function changeCredentials() {
-            return Promise.resolve(getPassword()).then(performStretch).then(storeCredentials).then(displayTitles).catch(
-                console.log)
+        function performStretch(clearTextPassword) {
+            var keyStretchNonce = encodeByteArrayToHexString(crypto.getRandomValues(new Uint8Array(12)))
+            return promisifiedScrypt(clearTextPassword, keyStretchNonce, scryptParams)
         }
 
         const promisifiedScrypt = (clearTextPassword, keyStretchNonce, scryptParams) =>
@@ -6133,20 +6130,22 @@
                     });
                 })
             })
+        // end cryptographic helper functions
 
-        function getPassword() {
-            return $('#new-password').value.normalize('NFKC')
+
+        // logging and error handling
+        function logResult(result) {
+            console.log("Log: " + result)
+            return result
         }
 
-        function performStretch(clearTextPassword) {
-            var keyStretchNonce = encodeByteArrayToHexString(crypto.getRandomValues(new Uint8Array(12)))
-            return promisifiedScrypt(clearTextPassword, keyStretchNonce, scryptParams)
+        function errorHandler(err) {
+            console.log("ERROR: " + err)
+            console.log(err.stack)
         }
 
-        function storeCredentials(credentials) {
-            localStorage.setItem('password', credentials.derivedKey)
-            localStorage.setItem('clearTextPassword', credentials.clearTextPassword)
-        }
+        // end logging and error handling
+
     </script>
     <script>
         function videoOff() {
