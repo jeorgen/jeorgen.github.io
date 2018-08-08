@@ -5944,10 +5944,6 @@
             }
         }
 
-        // end user interface triggered functions
-
-        // functions that update the UI
-
         function displayIt(title) {
             console.log('Displaying title ' + title)
             var seed = localStorage.getItem(title)
@@ -5955,6 +5951,10 @@
             currentSite.seed = seed
             scroll(0, 0) // Get 2 factor code into view
         }
+
+        // end user interface triggered functions
+
+        // functions that update the UI
 
         function updateUI() {
             var dbkeys = getStorageKeys()
@@ -6102,10 +6102,11 @@
             return ab2str(decr)
         }
 
-        function checkValidSite(seed) {
+        function checkValidSite(site) {
             // throws when invalid
             var totp = new jsOTP.totp();
-            totp.getOtp(seed)
+            totp.getOtp(site.seed)
+            return site
         }
 
         function decryptBackup(backup) {
