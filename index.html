@@ -296,7 +296,6 @@
         }
     </style>
     <script>
-
         // utility functions
         function ab2str(buf) {
             // return String.fromCharCode.apply(null, new Uint16Array(buf));
@@ -5885,22 +5884,22 @@
             dkLen: 32,
             encoding: 'hex'
         }
+
         localStorage.setItem('nonce', encodeByteArrayToHexString(crypto.getRandomValues(new Uint8Array(12))))
 
         document.addEventListener('DOMContentLoaded', function () {
             setInterval(timeLeft, 1000)
             updateUI()
-            if (typeof (process) !== 'undefined') {
-                $("#electron-status").innerHTML = 'Running under Electron'
-            } else {
-                $("#electron-status").innerHTML = 'NOT running under Electron'
+            // if (typeof (process) !== 'undefined') {
+            //     $("#electron-status").innerHTML = 'Running under Electron'
+            // } else {
+            //     $("#electron-status").innerHTML = 'NOT running under Electron'
 
-            }
+            // }
 
         });
         // end initialization code
-    </script>
-    <script>
+
         // user interface triggered functions
         function saveIt() {
             return Promise.resolve(getSite()).then(checkValidSite).then(storeSite).then(updateUI).catch(
@@ -5918,12 +5917,12 @@
         }
 
         function changeCredentials() {
-            return Promise.resolve(getPassword()).then(performStretch).then(storeCredentials).then(updateUI).catch(
+            return Promise.resolve(getPassword()).then(newNonce).then(performStretch).then(storeCredentials).then(updateUI).catch(
                 errorHandler)
         }
 
         function restore() {
-            return Promise.resolve(getBackup()).then(updateNonce).then(decryptBackup).then(
+            return Promise.resolve(getBackup()).then(updateNonce).then(restretch).then(decryptBackup).then(
                 logResult).then(updateStoredSites).then(updateUI).catch(errorHandler)
         }
 
@@ -5992,6 +5991,7 @@
             $('#password').innerHTML = localStorage.getItem('clearTextPassword')
             $('#stretched-password').innerHTML = localStorage.getItem('password')
             $('#new-password').value = localStorage.getItem('clearTextPassword')
+            $('#nonce').innerHTML = localStorage.getItem('nonce')
             var foo = dbkeys.map(function (key) {
                 $('#sites').innerHTML = $('#sites').innerHTML +
                     '<div class="site"><button class="title" onclick="displayIt(\'' + key + '\')">' + key.substring(
@@ -6066,10 +6066,12 @@
         function storeCredentials(credentials) {
             localStorage.setItem('password', credentials.derivedKey)
             localStorage.setItem('clearTextPassword', credentials.clearTextPassword)
+            localStorage.setItem('nonce', credentials.keyStretchNonce)
         }
 
         function updateNonce(backup) {
             localStorage.setItem('nonce', backup.nonce)
+            console.log('Nonce in update nonce is ' + localStorage.getItem('nonce'))
             return backup
         }
 
@@ -6077,15 +6079,21 @@
 
         // cryptographic helper functions
 
-        function makeEncrypted(text){
+        function makeEncrypted(text) {
             const key = decodeHexStringToByteArray(localStorage.getItem('password'))
             const nonce = decodeHexStringToByteArray(localStorage.getItem('nonce'))
+            console.log('nonce stored is ' + localStorage.getItem('nonce'))
+            console.log('re-encoded noce is ' + encodeByteArrayToHexString(nonce))
+
             return encrypt(text, key, nonce)
         }
 
         function encrypt(text, key, nonce) {
 
             const data = new str2ab(text, 'textLength')
+            console.log("Encrypting with nonce " + encodeByteArrayToHexString(nonce))
+            console.log("Encrypting with key " + encodeByteArrayToHexString(key))
+
             const encoder = new JSChaCha20(key, nonce)
             const encr = encoder.encrypt(data)
             return {
@@ -6095,7 +6103,9 @@
         }
 
         function decrypt(inText, key, nonce) {
-            console.log(nonce)
+            console.log("Decrypting with nonce " + encodeByteArrayToHexString(nonce))
+            console.log("Decrypting with key " + encodeByteArrayToHexString(key))
+
             const cryptoText = new base64ToBuffer(inText)
             const decoder = new JSChaCha20(key, nonce)
             const decr = decoder.decrypt(cryptoText)
@@ -6116,8 +6126,13 @@
             return JSON.parse(clearText)
         }
 
+        function newNonce(data) {
+            localStorage.setItem('nonce', encodeByteArrayToHexString(crypto.getRandomValues(new Uint8Array(12))))
+            return data
+        }
+
         function performStretch(clearTextPassword) {
-            var keyStretchNonce = encodeByteArrayToHexString(crypto.getRandomValues(new Uint8Array(12)))
+            var keyStretchNonce = localStorage.getItem('nonce')
             return promisifiedScrypt(clearTextPassword, keyStretchNonce, scryptParams)
         }
 
@@ -6146,7 +6161,6 @@
         }
 
         // end logging and error handling
-
     </script>
     <script>
         function videoOff() {
@@ -6322,6 +6336,8 @@ mDnEk1zyTrWc9L5DblxBUbQ6nmCoJJqaz9/Y2EtptbubXsnOJHL1Z03OPx6x21uV87ousWs/n1Tw
                         <br/> Stretched to:
                         <code id="stretched-password"></code>
                         <div id="stretching-status"></div>
+                        <br/> Nonce:
+                        <code id="nonce"></code>
                     </td>
                 </tr>
         </table>
