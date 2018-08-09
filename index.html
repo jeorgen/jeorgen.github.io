@@ -5917,12 +5917,12 @@
         }
 
         function changeCredentials() {
-            return Promise.resolve(getPassword()).then(newNonce).then(performStretch).then(storeCredentials).then(updateUI).catch(
+            return Promise.resolve(getPassword()).then(addNonce).then(performStretch).then(storeCredentials).then(updateUI).catch(
                 errorHandler)
         }
 
         function restore() {
-            return Promise.resolve(getBackup()).then(updateNonce).then(restretch).then(decryptBackup).then(
+            return getRestoreData().then(decryptBackup).then(
                 logResult).then(updateStoredSites).then(updateUI).catch(errorHandler)
         }
 
@@ -6031,8 +6031,10 @@
             return site
         }
 
-        function getBackup() {
-            return JSON.parse($("#restore").value)
+        function getRestoreData() {
+            var clearTextPassword = localStorage.getItem('clearTextPassword')
+            var restoreData = JSON.parse($("#restore").value)
+            return stretch(clearTextPassword, restoreData.nonce ).then(result => ({ cryptoText:restoreData.cryptoText, decryptionKey: result.derivedKey, nonce:restoreData.nonce }))
         }
 
         function getPassword() {
@@ -6080,34 +6082,39 @@
         // cryptographic helper functions
 
         function makeEncrypted(text) {
-            const key = decodeHexStringToByteArray(localStorage.getItem('password'))
-            const nonce = decodeHexStringToByteArray(localStorage.getItem('nonce'))
+            const key = localStorage.getItem('password')
+            const nonce = localStorage.getItem('nonce')
             console.log('nonce stored is ' + localStorage.getItem('nonce'))
-            console.log('re-encoded noce is ' + encodeByteArrayToHexString(nonce))
+            console.log('re-encoded noce is ' + nonce)
 
             return encrypt(text, key, nonce)
         }
 
         function encrypt(text, key, nonce) {
-
+            const encryptionKey = decodeHexStringToByteArray(key)
+            const encryptionNonce = decodeHexStringToByteArray(nonce)
             const data = new str2ab(text, 'textLength')
-            console.log("Encrypting with nonce " + encodeByteArrayToHexString(nonce))
-            console.log("Encrypting with key " + encodeByteArrayToHexString(key))
+            console.log("Encrypting with nonce " + encodeByteArrayToHexString(encryptionNonce))
+            console.log("Encrypting with key " + encodeByteArrayToHexString(encryptionKey))
 
-            const encoder = new JSChaCha20(key, nonce)
+            const encoder = new JSChaCha20(encryptionKey, encryptionNonce)
             const encr = encoder.encrypt(data)
+            // check if data can be decrypted again
+            JSON.parse(decrypt(bufferToBase64(encr), key, nonce))
+            console.log('test decryption was successful with ' + key + ' ' + nonce)
             return {
                 cryptoText: bufferToBase64(encr),
-                nonce: encodeByteArrayToHexString(nonce)
+                nonce: nonce
             }
         }
 
         function decrypt(inText, key, nonce) {
-            console.log("Decrypting with nonce " + encodeByteArrayToHexString(nonce))
-            console.log("Decrypting with key " + encodeByteArrayToHexString(key))
-
+            console.log("In decrypt, decrypting with nonce " + nonce)
+            console.log("In decrypt, decrypting with key " + key)
+            const decryptionKey = decodeHexStringToByteArray(key)
+            const decryptionNonce = decodeHexStringToByteArray(nonce)
             const cryptoText = new base64ToBuffer(inText)
-            const decoder = new JSChaCha20(key, nonce)
+            const decoder = new JSChaCha20(decryptionKey, decryptionNonce)
             const decr = decoder.decrypt(cryptoText)
             return ab2str(decr)
         }
@@ -6119,22 +6126,28 @@
             return site
         }
 
-        function decryptBackup(backup) {
-            console.log('in decrypt backup')
-            var key = decodeHexStringToByteArray(localStorage.getItem('password'))
-            var clearText = decrypt(backup.cryptoText, key, decodeHexStringToByteArray(backup.nonce))
+        function decryptBackup(restoreData) {
+            console.log('in decryptBackup with decryption key '+ restoreData.decryptionKey)
+            var clearText = decrypt(restoreData.cryptoText, restoreData.decryptionKey, restoreData.nonce)
             return JSON.parse(clearText)
         }
 
-        function newNonce(data) {
-            localStorage.setItem('nonce', encodeByteArrayToHexString(crypto.getRandomValues(new Uint8Array(12))))
-            return data
+        function addNonce(key) {
+            return {key: key, nonce: encodeByteArrayToHexString(crypto.getRandomValues(new Uint8Array(12)))}
         }
 
-        function performStretch(clearTextPassword) {
-            var keyStretchNonce = localStorage.getItem('nonce')
+        function stretch(clearTextPassword, keyStretchNonce ){
+            console.log('In stretch, clear text password is '+ clearTextPassword )
+            console.log('In stretch, nonce is '+ keyStretchNonce )
             return promisifiedScrypt(clearTextPassword, keyStretchNonce, scryptParams)
         }
+
+        function performStretch(credentials) {
+            console.log('In performStretch, clear text password is '+ credentials.key )
+            console.log('In performStretch, nonce is '+ credentials.nonce )
+            return promisifiedScrypt(credentials.key, credentials.nonce, scryptParams)
+        }
+
 
         const promisifiedScrypt = (clearTextPassword, keyStretchNonce, scryptParams) =>
             new Promise((resolve, reject) => {
