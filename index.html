@@ -304,7 +304,7 @@
         }
 
         function str2ab(str, bufSize) {
-            var contents = new TextEncoder("utf-8").encode(str)
+            const contents = new TextEncoder("utf-8").encode(str)
             if (bufSize === 'textLength' || contents.byteLength === bufSize) {
                 return contents
             }
@@ -5906,12 +5906,12 @@
         }
 
         function deleteIt(title) {
-            var ok = confirm("Deleting " + title + " is OK?")
+            const ok = confirm("Deleting " + title + " is OK?")
             if (!ok) {
                 return
             }
             console.log('Deleting title ' + title)
-            var seed = localStorage.removeItem(title)
+            localStorage.removeItem(title)
             updateUI()
         }
 
@@ -5927,13 +5927,13 @@
         }
 
         function toggleVideoSection() {
-            var div = document.getElementById('qr-video-section');
+            const div = document.getElementById('qr-video-section');
             div.style.display = div.style.display == "none" ? "block" : "none";
         }
 
         function toggleSection(label) {
-            var statusIndicator = document.getElementById(label + '-section-toggle-status')
-            var div = document.getElementById(label + '-section')
+            const statusIndicator = document.getElementById(label + '-section-toggle-status')
+            const div = document.getElementById(label + '-section')
             if (div.style.display === "none") {
                 div.style.display = "block"
                 statusIndicator.innerHTML = '&dtrif;'
@@ -5945,7 +5945,7 @@
 
         function displayIt(title) {
             console.log('Displaying title ' + title)
-            var seed = localStorage.getItem(title)
+            const seed = localStorage.getItem(title)
             currentSite.title = title.substring(7)
             currentSite.seed = seed
             scroll(0, 0) // Get 2 factor code into view
@@ -5956,27 +5956,27 @@
         // functions that update the UI
 
         function updateUI() {
-            var dbkeys = getStorageKeys()
+            const dbkeys = getStorageKeys()
             console.log('Storage keys are ' + JSON.stringify(dbkeys))
             $("#sites").innerHTML = ''
 
             if (dbkeys.length === 0) {
                 $('#sites').innerHTML = '<div>No sites</div>'
             }
-            var items = dbkeys.map(function (title) {
+            const items = dbkeys.map(function (title) {
                 return {
                     title: title,
                     seed: localStorage.getItem(title)
                 }
             })
-            var bup = {
+            const bup = {
                 "desc": "All seeds backed up here, copy and paste somewhere",
                 sites: items
             }
-            var text = JSON.stringify(bup, null, '  ')
+            const text = JSON.stringify(bup, null, '  ')
             if (localStorage.getItem('password')) {
-                var cryptResult = makeEncrypted(text)
-                var encrypted = {
+                const cryptResult = makeEncrypted(text)
+                const encrypted = {
                     cryptoText: cryptResult.cryptoText,
                     keyStretchFactor: scryptParams,
                     keyStretchMethod: 'scrypt',
@@ -5992,7 +5992,7 @@
             $('#stretched-password').innerHTML = localStorage.getItem('password')
             $('#new-password').value = localStorage.getItem('clearTextPassword')
             $('#nonce').innerHTML = localStorage.getItem('nonce')
-            var foo = dbkeys.map(function (key) {
+            dbkeys.map(function (key) {
                 $('#sites').innerHTML = $('#sites').innerHTML +
                     '<div class="site"><button class="title" onclick="displayIt(\'' + key + '\')">' + key.substring(
                         7) + '</button><button class="title" onclick="deleteIt(\'' + key +
@@ -6002,11 +6002,11 @@
         }
 
         function timeLeft() {
-            var d = new Date();
+            const d = new Date();
             $("#time").innerHTML = (30 - Math.round(d.getTime() / 1000) % 30)
-            var totp = new jsOTP.totp();
+            const totp = new jsOTP.totp();
             if (currentSite.seed) {
-                var timeCode = totp.getOtp(currentSite.seed)
+                const timeCode = totp.getOtp(currentSite.seed)
                 $("#current-site").innerHTML = currentSite.title
 
                 if ($("#resultCode").innerHTML !== timeCode + '') {
@@ -6036,8 +6036,8 @@
         }
 
         function getRestoreData() {
-            var clearTextPassword = localStorage.getItem('clearTextPassword')
-            var restoreData = JSON.parse($("#restore").value)
+            const clearTextPassword = localStorage.getItem('clearTextPassword')
+            const restoreData = JSON.parse($("#restore").value)
             return stretch(clearTextPassword, restoreData.nonce, restoreData.keyStretchFactor).then(result => ({
                 cryptoText: restoreData.cryptoText,
                 decryptionKey: result.derivedKey,
@@ -6057,7 +6057,6 @@
 
         function getStorageKeys() {
             var dbkeys = []
-
             for (var i = 0, len = localStorage.length; i < len; ++i) {
                 if (localStorage.key(i).startsWith('Title: ')) {
                     dbkeys.push(localStorage.key(i))
@@ -6123,14 +6122,14 @@
 
         function checkValidSite(site) {
             // throws when invalid
-            var totp = new jsOTP.totp();
+            const totp = new jsOTP.totp();
             totp.getOtp(site.seed)
             return site
         }
 
         function decryptBackup(restoreData) {
             console.log('in decryptBackup with decryption key ' + restoreData.decryptionKey)
-            var clearText = decrypt(restoreData.cryptoText, restoreData.decryptionKey, restoreData.nonce)
+            const clearText = decrypt(restoreData.cryptoText, restoreData.decryptionKey, restoreData.nonce)
             return JSON.parse(clearText)
         }
 
