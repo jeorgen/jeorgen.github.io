@@ -86,6 +86,7 @@
         }
     </style>
     <style type="text/css">
+        div.section {margin-left: 1em}
         button,
         input {
             font-size: 200%
@@ -5915,13 +5916,14 @@
         }
 
         function changeCredentials() {
-            return Promise.resolve(getPassword()).then(addNonce).then(performStretch).then(storeCredentials).then(updateUI).catch(
+            return Promise.resolve(getPassword()).then(addNonce).then(performStretch).then(storeCredentials).then(
+                updateUI).catch(
                 errorHandler)
         }
 
         function restore() {
             return getRestoreData().then(decryptBackup).then(
-                logResult).then(updateStoredSites).then(updateUI).catch(errorHandler)
+                logResult).then(updateStoredSites).then(wipeRestoreField).then(updateUI).catch(errorHandler)
         }
 
         function toggleVideoSection() {
@@ -6018,6 +6020,10 @@
             }
         }
 
+        function wipeRestoreField(){
+            $("#restore").value = ''
+        }
+
         // end functions that update the UI
 
         // accessors for UI elements
@@ -6032,7 +6038,11 @@
         function getRestoreData() {
             var clearTextPassword = localStorage.getItem('clearTextPassword')
             var restoreData = JSON.parse($("#restore").value)
-            return stretch(clearTextPassword, restoreData.nonce ).then(result => ({ cryptoText:restoreData.cryptoText, decryptionKey: result.derivedKey, nonce:restoreData.nonce }))
+            return stretch(clearTextPassword, restoreData.nonce, restoreData.keyStretchFactor).then(result => ({
+                cryptoText: restoreData.cryptoText,
+                decryptionKey: result.derivedKey,
+                nonce: restoreData.nonce
+            }))
         }
 
         function getPassword() {
@@ -6069,12 +6079,6 @@
             localStorage.setItem('nonce', credentials.keyStretchNonce)
         }
 
-        function updateNonce(backup) {
-            localStorage.setItem('nonce', backup.nonce)
-            console.log('Nonce in update nonce is ' + localStorage.getItem('nonce'))
-            return backup
-        }
-
         // end database functions
 
         // cryptographic helper functions
@@ -6099,7 +6103,7 @@
             const encr = encoder.encrypt(data)
             // check if data can be decrypted again
             JSON.parse(decrypt(bufferToBase64(encr), key, nonce))
-            console.log('test decryption was successful with ' + key + ' ' + nonce)
+            console.log('Verifying encryption was successful by decrypting with ' + key + ' ' + nonce)
             return {
                 cryptoText: bufferToBase64(encr),
                 nonce: nonce
@@ -6125,31 +6129,32 @@
         }
 
         function decryptBackup(restoreData) {
-            console.log('in decryptBackup with decryption key '+ restoreData.decryptionKey)
+            console.log('in decryptBackup with decryption key ' + restoreData.decryptionKey)
             var clearText = decrypt(restoreData.cryptoText, restoreData.decryptionKey, restoreData.nonce)
             return JSON.parse(clearText)
         }
 
         function addNonce(key) {
-            return {key: key, nonce: encodeByteArrayToHexString(crypto.getRandomValues(new Uint8Array(12)))}
+            return {
+                key: key,
+                nonce: encodeByteArrayToHexString(crypto.getRandomValues(new Uint8Array(12))),
+            }
         }
 
-        function stretch(clearTextPassword, keyStretchNonce ){
-            console.log('In stretch, clear text password is '+ clearTextPassword )
-            console.log('In stretch, nonce is '+ keyStretchNonce )
-            return promisifiedScrypt(clearTextPassword, keyStretchNonce, scryptParams)
+        function stretch(clearTextPassword, keyStretchNonce, keyStretchFactor) {
+            console.log('In stretch, clear text password is ' + clearTextPassword)
+            console.log('In stretch, nonce is ' + keyStretchNonce)
+            return promisifiedScrypt(clearTextPassword, keyStretchNonce, keyStretchFactor)
         }
 
         function performStretch(credentials) {
-            console.log('In performStretch, clear text password is '+ credentials.key )
-            console.log('In performStretch, nonce is '+ credentials.nonce )
-            return promisifiedScrypt(credentials.key, credentials.nonce, scryptParams)
+            return stretch(credentials.key, credentials.nonce, scryptParams)
         }
 
 
-        const promisifiedScrypt = (clearTextPassword, keyStretchNonce, scryptParams) =>
+        const promisifiedScrypt = (clearTextPassword, keyStretchNonce, keyStretchFactor) =>
             new Promise((resolve, reject) => {
-                scrypt(clearTextPassword, keyStretchNonce, scryptParams, (derivedKey) => {
+                scrypt(clearTextPassword, keyStretchNonce, keyStretchFactor, (derivedKey) => {
                     resolve({
                         derivedKey: derivedKey,
                         clearTextPassword: clearTextPassword,
@@ -6244,7 +6249,7 @@ k20YDMBZrpPTO73sJFM6BGE+14FYHzLxmYLru73tSNfZeYw2mcNEHiN1IgkjutPrzvbRuhMchmtA
 mDnEk1zyTrWc9L5DblxBUbQ6nmCoJJqaz9/Y2EtptbubXsnOJHL1Z03OPx6x21uV87ousWs/n1Tw
 3D38r59/au+6jPb/rx7Z/23/AHpgPmfzR1ymAAAAAElFTkSuQmCC" />
         </div>
-        <b>tootp</b> - alpha software! 0.27</div>
+        <b>tootp</b> - alpha software! 0.3</div>
     <div style="clear: both;"></div>
     <button class="section-controller" onclick="toggleSection('new-site')">Add new site:
         <span class="toggle-status" id="new-site-section-toggle-status">&rtrif;...</span>
@@ -6364,7 +6369,7 @@ mDnEk1zyTrWc9L5DblxBUbQ6nmCoJJqaz9/Y2EtptbubXsnOJHL1Z03OPx6x21uV87ousWs/n1Tw
         every 30 seconds. It's surprisingly difficult to backup the seed codes in many totp clients, such as FreeOTP, Authy
         or Google Authenticator. The purpose of tootp is to be a totp client where it is easy to make backups of your totp
         site entries, and where all code is open source and included in the tootp page.
-        <h2>Where data is stored</h2> All data is stored locally in your browser, in something called localstorage. If you uninstall
+        <h2>Where data is stored</h2> All data is stored in cleartext locally in your browser, in something called <em>localstorage</em>. If you uninstall
         the browser or in another way delete localstorage, your data is gone. Unless you've backed it up, see next section:
         <h2>How to backup and restore</h2> First make sure you've set a password in the "Passphrase for backup &amp; restore:"
         section. Then just copy the contents of the "Encrypted backup" field and store that contents somewhere, preferrably
@@ -6399,13 +6404,13 @@ mDnEk1zyTrWc9L5DblxBUbQ6nmCoJJqaz9/Y2EtptbubXsnOJHL1Z03OPx6x21uV87ousWs/n1Tw
             This project is quickly cobbled together and makes no guarantees. The status of this project is "Seems to work for me but
             I will use one more client, such as FreeOTP to be on the safe side." All javascript is included in the page,
             no network access should happen after the page loads. If you load this page from your local device, then no network
-            activity should happen at all.</p>
+            activity should happen at all. This means you can run tootp from a browser with no network access, such as a browser running in a virtual machine which has no network access, from a computer with no network access (such as an Android phone or tablet with radios disabled) or from a profile in your web browser that has no network access (for example setting an invalid SOCKS proxy might do the trick).</p>
         <p>All seeds and the password are stored in cleartext in localstorage in your browser.</p>
         <p>
             It is recommended that you save the source of this page as a backup, so that you always have a copy of the precise execution
             environment for restore purposes, in case there are unintentional quirks of the encryption in tootp. Beware that
-            if you run tootp as a local file, in my tests it seems like locally opened files share and hence can read each
-            other's local storage entries.</p>
+            if you run tootp as a local file, in my tests it seems that in some versions and browsers locally opened files share and hence can read each
+            other's local storage entries. In others it seems that there is separate localstorage for each file location.</p>
         <p>
             If you are afraid of exploits in the browser getting at tootp data, consider running tootp in its own browser, maybe even
             in an environment that does not have network access. If you are worried about local keyloggers and screen scrapers
