@@ -6125,9 +6125,8 @@
             $('#nonce').innerHTML = localStorage.getItem('nonce')
             dbkeys.map(function (key) {
                 $('#sites').innerHTML = $('#sites').innerHTML +
-                    '<div class="site"><button class="title" onclick="displayIt(\'' + key + '\')">' + key.substring(
-                        7) + '</button><button class="title" onclick="deleteIt(\'' + key +
-                    '\')">x</button> </div>'
+                    `<div class="site"><button class="title" id = "${key}" onclick="displayIt('${key}')">${key.substring(
+                        7)}</button><button class="title" id = "delete-${key}" onclick="deleteIt('${key}')">x</button> </div>`
                 return key
             })
         }
@@ -6278,7 +6277,10 @@
 
         function stretch(clearTextPassword, keyStretchNonce, keyStretchFactor) {
             console.log('In stretch, clear text password is ' + clearTextPassword)
+            // throw 'clear text nonce is ' + keyStretchNonce
             console.log('In stretch, nonce is ' + keyStretchNonce)
+            console.log('In stretch, keystretchfactor is ' + JSON.stringify(keyStretchFactor))
+
             return promisifiedScrypt(clearTextPassword, keyStretchNonce, keyStretchFactor)
         }
 
