@@ -6126,7 +6126,7 @@
             dbkeys.map(function (key) {
                 $('#sites').innerHTML = $('#sites').innerHTML +
                     `<div class="site"><button class="title" id = "${key}" onclick="displayIt('${key}')">${key.substring(
-                        7)}</button><button class="title" id = "delete-${key}" onclick="deleteIt('${key}')">x</button> </div>`
+                        7)}</button><button class="title" id = "delete-${key.replace(/ /g,'-').replace(/:/g,'-')}" onclick="deleteIt('${key}')">x</button> </div>`
                 return key
             })
         }
@@ -6390,7 +6390,7 @@ mDnEk1zyTrWc9L5DblxBUbQ6nmCoJJqaz9/Y2EtptbubXsnOJHL1Z03OPx6x21uV87ousWs/n1Tw
         </div>
         <b>tootp</b> - alpha software! 0.3</div>
     <div style="clear: both;"></div>
-    <button class="section-controller" onclick="toggleSection('new-site')">Add new site:
+    <button class="section-controller" id="new-site" onclick="toggleSection('new-site')">Add new site:
         <span class="toggle-status" id="new-site-section-toggle-status">&rtrif;...</span>
     </button>
     <div id="new-site-section" class="section" style="display:none">
@@ -6456,7 +6456,7 @@ mDnEk1zyTrWc9L5DblxBUbQ6nmCoJJqaz9/Y2EtptbubXsnOJHL1Z03OPx6x21uV87ousWs/n1Tw
     <h2>Saved sites</h2>
     <div id="sites">
     </div>
-    <button class="section-controller" onclick="toggleSection('backup-restore')">Backup &amp; restore
+    <button class="section-controller" id="backup-restore" onclick="toggleSection('backup-restore')">Backup &amp; restore
         <span class="toggle-status" id="backup-restore-section-toggle-status">&rtrif;...</span>
     </button>
     <div id="backup-restore-section" class="section" style="display:none">
@@ -6468,7 +6468,7 @@ mDnEk1zyTrWc9L5DblxBUbQ6nmCoJJqaz9/Y2EtptbubXsnOJHL1Z03OPx6x21uV87ousWs/n1Tw
         <textarea id="restore"></textarea>
         <button id="restore-backup" onclick="restore()">Update</button>
     </div>
-    <button class="section-controller" onclick="toggleSection('credentials')">Passphrase for backup &amp; restore
+    <button class="section-controller" id="credentials" onclick="toggleSection('credentials')">Passphrase for backup &amp; restore
         <span class="toggle-status" id="credentials-section-toggle-status">&rtrif;...</span>
     </button>
     <br> Make sure only
@@ -6484,7 +6484,7 @@ mDnEk1zyTrWc9L5DblxBUbQ6nmCoJJqaz9/Y2EtptbubXsnOJHL1Z03OPx6x21uV87ousWs/n1Tw
                         Passphrase:</td>
                     <td>
                         <input type="text" name="newpassword" id="new-password" />
-                        <button onclick="changeCredentials()">Update passphrase</button>
+                        <button onclick="changeCredentials()" id="change-credentials">Update passphrase</button>
                         <br/>This should be long &amp; difficult to guess, for security.
                         <br/>Stored:
                         <code id="password"></code>
