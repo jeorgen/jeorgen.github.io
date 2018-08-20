@@ -10,13 +10,13 @@ before(async () => {
   page = await browser.newPage()
   // Ok any dialog
   page.on("dialog", (dialog) => {
-    console.log(`Dialog has arrived and will be Ok'ed: ${dialog.message()}`);
+    // console.log(`Dialog has arrived and will be Ok'ed: ${dialog.message()}`);
     dialog.accept();
   })
 })
 
 describe('Roundtripping end to end on UI level', () => {
-  it('Roundtrip set password, create site, backup and restore', async () => {
+  it('Roundtrip: 1) set password, 2) create site, 3) backup, 4) delete site, 5) restore, 6) verify restored', async () => {
 
     await page.goto(`file://${__dirname}/../index.html`)
     // Open the credential section so it's visible
