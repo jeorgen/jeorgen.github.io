@@ -23,10 +23,10 @@ describe('Roundtripping end to end on UI level', () => {
     await page.click('#credentials')
     // Let's get a snapshot of what the backup data looks like before any password is set
     const noBackupText = await page.$eval('#encrypted-backup', el => el.value)
-    // console.log(noBackupText)
-    // Change password
+    // Change the password
     await page.type('#new-password', 'masonit')
     await page.click('#change-credentials')
+    // Open the new site section
     await page.click('#new-site')
     // Keystretching and storing is ready when the backup data has changed,
     // since a new nonce is generated for each password change
@@ -57,37 +57,11 @@ describe('Roundtripping end to end on UI level', () => {
     // Wait for the restore to be ready
     await page.waitForFunction(newEmptyBackup => document.querySelector('#encrypted-backup').value !== newEmptyBackup, {polling:200}, newEmptyBackup)
     // Check if the site is back, by seeing if its delete button is back
-    const searchInput = await page.$('#delete-Title--lucky-cat')
-    assert.ok(searchInput, "Site is back")
+    const deleteButton = await page.$('#delete-Title--lucky-cat')
+    assert.ok(deleteButton, "Site is back")
   }).timeout(20000)
-
-  // it('shows search results after search input', async () => {
-
-  //   // search for the term "luck cat"
-  //   await page.type('input.ui-searchbar-keyword', 'lucky cat')
-
-  //   // click the first result and assert it returns something
-  //   await page.click('input.ui-searchbar-submit')
-  //   await page.waitForSelector('[data-content="abox-ProductNormalList"]')
-  //   const firstProduct = await page.$('.item-content')
-  //   assert.ok(firstProduct)
-  // }).timeout(10000)
 })
 
 after(async () => {
   await browser.close()
 })
-
-// .goto(`file://${__dirname}/../index.html`)
-// .type('#title', 'github nightmare')
-// .type('#seed', '5478923')
-// .click('#save')
-// .wait(1000)
-// .evaluate(() => $('#encrypted-backup').value)
-// .click('#delete-Title--github-nightmare')
-// .wait(1000)
-// .end()
-// .then(JSON.stringify)
-// .then(console.log)
-// .catch(error => {
-//   console.error('Something failed:', error)
