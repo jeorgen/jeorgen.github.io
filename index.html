@@ -6275,6 +6275,18 @@
             }
         }
 
+        function promisifiedScrypt(clearTextPassword, keyStretchNonce, keyStretchFactor){
+            return new Promise((resolve, reject) => {
+                scrypt(clearTextPassword, keyStretchNonce, keyStretchFactor, (derivedKey) => {
+                    resolve({
+                        derivedKey: derivedKey,
+                        clearTextPassword: clearTextPassword,
+                        keyStretchNonce: keyStretchNonce
+                    });
+                })
+            })
+        }
+
         function stretch(clearTextPassword, keyStretchNonce, keyStretchFactor) {
             console.log('In stretch, clear text password is ' + clearTextPassword)
             // throw 'clear text nonce is ' + keyStretchNonce
@@ -6287,20 +6299,7 @@
         function performStretch(credentials) {
             return stretch(credentials.key, credentials.nonce, scryptParams)
         }
-
-
-        const promisifiedScrypt = (clearTextPassword, keyStretchNonce, keyStretchFactor) =>
-            new Promise((resolve, reject) => {
-                scrypt(clearTextPassword, keyStretchNonce, keyStretchFactor, (derivedKey) => {
-                    resolve({
-                        derivedKey: derivedKey,
-                        clearTextPassword: clearTextPassword,
-                        keyStretchNonce: keyStretchNonce
-                    });
-                })
-            })
         // end cryptographic helper functions
-
 
         // logging and error handling
         function logResult(result) {
