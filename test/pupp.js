@@ -45,6 +45,8 @@ describe('Roundtripping end to end on UI level', () => {
     await page.click('#delete-Title--lucky-cat')
     // Wait for the delete to have come through
     await page.waitForFunction(actualBackup => document.querySelector('#encrypted-backup').value !== actualBackup, {polling:200}, actualBackup)
+    let deleteButton = await page.$('#delete-Title--lucky-cat')
+    assert.isNull(deleteButton, "Site and its delete button should be gone")
     // Snapshot the new empty backup
     const newEmptyBackup = await page.$eval('#encrypted-backup', el => el.value)
     // Let's restore the backup
@@ -57,7 +59,7 @@ describe('Roundtripping end to end on UI level', () => {
     // Wait for the restore to be ready
     await page.waitForFunction(newEmptyBackup => document.querySelector('#encrypted-backup').value !== newEmptyBackup, {polling:200}, newEmptyBackup)
     // Check if the site is back, by seeing if its delete button is back
-    const deleteButton = await page.$('#delete-Title--lucky-cat')
+    deleteButton = await page.$('#delete-Title--lucky-cat')
     assert.ok(deleteButton, "Site is back")
   }).timeout(20000)
 })
