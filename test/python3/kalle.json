@@ -1,0 +1,13 @@
+{
+  "cryptoText": "0Nu2R4ZQNDnHaLAIn4IM45y1bE3kBpKobHWh1G7nJ55U8ij9R+2Mq2SuA5j86oXMDlqeQNWh1zHLWTNl5sSr1U1dEj2OIJcf/QBObj5yWwS13iiPZQ69rasKEDw1V4cW8Mccu6ZMV2OWjSf7woQN3zmksEFlOlcrDQNphymMWCpo9lspZEr9M8k3AcOJwDz73SGVrvuO",
+  "keyStretchFactor": {
+    "logN": 16,
+    "r": 8,
+    "p": 1,
+    "dkLen": 32,
+    "encoding": "hex"
+  },
+  "keyStretchMethod": "scrypt",
+  "cipher": "chacha20",
+  "nonce": "ae8f7d75180617a401ca5435"
+}
