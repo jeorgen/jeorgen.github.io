@@ -42,9 +42,7 @@ parser.add_argument('file_name',nargs="?", default=None)
 args = parser.parse_args()
 
 def _stretch(password, logN, nonce, r, p, buflen):
-	print (password)
 	stretched = binascii.hexlify(scrypt.hash(password.encode('utf-8'), nonce, N=2**int(logN), r=r, p=p, buflen=buflen))
-	print("stretched: " + str(stretched))
 	return stretched
 
 def stretch(contents, password):
@@ -52,17 +50,13 @@ def stretch(contents, password):
 	params = contents['keyStretchFactor']
 	stretched = binascii.hexlify(scrypt.hash(password.encode('utf-8'), contents['nonce'], N=2**int(params['logN']), r=args.R, p=args.P, buflen=args.BUFLEN))
 	print("Stretched: " + stretched)
-
 	return stretched
  
 def decrypt_JSON(cryptotext, password, nonce):
 	secret = binascii.unhexlify(password)
 	msg_nonce = binascii.unhexlify(nonce)
 	cipher = ChaCha20.new(key=secret, nonce=msg_nonce)
-	# print (cipher.nonce)
 	return cipher.decrypt(cryptotext)
-
-
 
 def decrypt(key, hexnonce, cryptotext):
 	secret = binascii.unhexlify(key)
@@ -70,15 +64,13 @@ def decrypt(key, hexnonce, cryptotext):
 	cipher = ChaCha20.new(key=secret, nonce=nonce)
 	# return base64.b64encode(pysodium.crypto_aead_chacha20poly1305_ietf_encrypt(plainText, None, nonce, secret))
 	decoded = cipher.decrypt(cryptotext)
-	print(decoded)
-	return base64.b64decode(decoded)
+	return decoded
 
 def decryptfile(file_name, password):
 	fo = open(args.file_name)
 	contents = json.load(fo)
 	fo.close()
 	stretchparams = contents['keyStretchFactor']
-	
 	stretched = _stretch(args.PASSWORD,  logN=stretchparams['logN'], nonce=contents['nonce'], r=stretchparams['r'], p=stretchparams['p'], buflen=stretchparams['dkLen'])
 	cryptotext = base64.b64decode(contents['cryptoText'])
 	cleartext = decrypt(key=stretched, hexnonce = contents['nonce'], cryptotext = cryptotext)
@@ -87,12 +79,11 @@ def decryptfile(file_name, password):
 if __name__ == "__main__":
     if args.PASSWORD and args.file_name is not None:
     	cleartext = decryptfile(args.file_name, args.PASSWORD)
-    	print (cleartext)
+    	print (cleartext.decode('utf-8'))
     elif args.PASSWORD and args.SALT:
     	# pass
         print(_stretch(args.PASSWORD,  logN=args.LOGN, nonce=args.SALT, r=args.R, p=args.P, buflen=args.BUFLEN) )
     else:
     	print ("Not enough parameters")
     	print (DOC)
-			#scrypt(password, salt, N, r, p, buflen)
 
