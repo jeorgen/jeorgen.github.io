@@ -2,11 +2,24 @@
 # coding: utf-8
 
 import binascii
-import scrypt
-from Crypto.Cipher import ChaCha20
+import scrypt # from e.g. scrypt==0.8.20
+from Crypto.Cipher import ChaCha20 # from e.g pycryptodome==3.15.0
 import json
 import base64
 import hashlib
+
+# `pip freeze` gave these versions for a functioning setup:
+# certifi==2022.6.15
+# charset-normalizer==2.1.1
+# idna==3.3
+# Naked==0.1.31
+# pycryptodome==3.15.0
+# PyYAML==6.0
+# requests==2.28.1
+# scrypt==0.8.20
+# shellescape==3.8.1
+# urllib3==1.26.12
+
 
 
 DOC = ''' This program decrypts a backup file from tootp.
@@ -42,46 +55,47 @@ parser.add_argument('file_name',nargs="?", default=None)
 args = parser.parse_args()
 
 def _stretch(password, logN, nonce, r, p, buflen):
-	print (password + " in _stretch")
-	print("password=%s, logN=%s, nonce=%s, r=%s, p=%s, buflen=%s" % (password, logN, nonce, r, p, buflen))
-	stretched = binascii.hexlify(scrypt.hash(password.encode('utf-8'), nonce, N=2**int(logN), r=r, p=p, buflen=buflen))
-	return stretched
+  # print (password + " in _stretch")
+  # print("password=%s, logN=%s, nonce=%s, r=%s, p=%s, buflen=%s" % (password, logN, nonce, r, p, buflen))
+  stretched = binascii.hexlify(scrypt.hash(password.encode('utf-8'), nonce, N=2**int(logN), r=r, p=p, buflen=buflen))
+  return stretched
 
 def stretch(contents, password):
-	print (password)
-	params = contents['keyStretchFactor']
-	stretched = binascii.hexlify(scrypt.hash(password.encode('utf-8'), contents['nonce'], N=2**int(params['logN']), r=args.R, p=args.P, buflen=args.BUFLEN))
-	return stretched
+  # print (password)
+  params = contents['keyStretchFactor']
+  stretched = binascii.hexlify(scrypt.hash(password.encode('utf-8'), contents['nonce'], N=2**int(params['logN']), r=args.R, p=args.P, buflen=args.BUFLEN))
+  return stretched
  
 def decrypt_JSON(cryptotext, password, nonce):
-	secret = binascii.unhexlify(password)
-	msg_nonce = binascii.unhexlify(nonce)
-	cipher = ChaCha20.new(key=secret, nonce=msg_nonce)
-	# print (cipher.nonce)
-	return cipher.decrypt(cryptotext)
+  secret = binascii.unhexlify(password)
+  msg_nonce = binascii.unhexlify(nonce)
+  cipher = ChaCha20.new(key=secret, nonce=msg_nonce)
+  # print (cipher.nonce)
+  return cipher.decrypt(cryptotext)
 
 def decrypt(file_name, password):
-	fo = open(args.file_name)
-	contents = json.load(fo)
-	fo.close()
-	stretchparams = contents['keyStretchFactor']
-	
-	stretched = _stretch(args.PASSWORD,  logN=stretchparams['logN'], nonce=contents['nonce'], r=stretchparams['r'], p=stretchparams['p'], buflen=stretchparams['dkLen'])
+  fo = open(args.file_name)
+  contents = json.load(fo)
+  fo.close()
+  stretchparams = contents['keyStretchFactor']
 
-	cryptotext = base64.b64decode(contents['cryptoText'])
-	cleartext = decrypt_JSON(cryptotext = cryptotext, password=stretched, nonce = contents['nonce'])
-	return cleartext
+  stretched = _stretch(args.PASSWORD,  logN=stretchparams['logN'], nonce=contents['nonce'], r=stretchparams['r'], p=stretchparams['p'], buflen=stretchparams['dkLen'])
+
+  cryptotext = base64.b64decode(contents['cryptoText'])
+  cleartext = decrypt_JSON(cryptotext = cryptotext, password=stretched, nonce = contents['nonce'])
+  return cleartext
 
 if __name__ == "__main__":
     if args.PASSWORD and args.file_name is not None:
-    	cleartext = decrypt(args.file_name, args.PASSWORD)
-    	print (cleartext)
+      cleartext = decrypt(args.file_name, args.PASSWORD)
+      json_object = json.loads(cleartext)
+      json_formatted_str = json.dumps(json_object, indent=2)
+      print (json_formatted_str)
     elif args.PASSWORD and args.SALT:
-    	# pass
+      # pass
         print(_stretch(args.PASSWORD,  logN=args.LOGN, nonce=args.SALT, r=args.R, p=args.P, buflen=args.BUFLEN) )
     else:
-    	print ("Not enough parameters")
-    	print (DOC)
-			#scrypt(password, salt, N, r, p, buflen)
+     print ("Not enough parameters")
+     print (DOC)
+    #scrypt(password, salt, N, r, p, buflen)
 
-# print(binascii.hexlify(b'Foo'))
