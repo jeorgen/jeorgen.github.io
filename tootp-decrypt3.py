@@ -42,7 +42,8 @@ parser.add_argument('file_name',nargs="?", default=None)
 args = parser.parse_args()
 
 def _stretch(password, logN, nonce, r, p, buflen):
-	print (password)
+	print (password + " in _stretch")
+	print("password=%s, logN=%s, nonce=%s, r=%s, p=%s, buflen=%s" % (password, logN, nonce, r, p, buflen))
 	stretched = binascii.hexlify(scrypt.hash(password.encode('utf-8'), nonce, N=2**int(logN), r=r, p=p, buflen=buflen))
 	return stretched
 
@@ -65,7 +66,8 @@ def decrypt(file_name, password):
 	fo.close()
 	stretchparams = contents['keyStretchFactor']
 	
-	stretched = _stretch(args.PASSWORD,  logN=stretchparams['logN'], nonce=contents['nonce'], r=stretchparams['r'], p=stretchparams['r'], buflen=stretchparams['dkLen'])
+	stretched = _stretch(args.PASSWORD,  logN=stretchparams['logN'], nonce=contents['nonce'], r=stretchparams['r'], p=stretchparams['p'], buflen=stretchparams['dkLen'])
+
 	cryptotext = base64.b64decode(contents['cryptoText'])
 	cleartext = decrypt_JSON(cryptotext = cryptotext, password=stretched, nonce = contents['nonce'])
 	return cleartext
@@ -82,4 +84,4 @@ if __name__ == "__main__":
     	print (DOC)
 			#scrypt(password, salt, N, r, p, buflen)
 
-print(binascii.hexlify(b'Foo'))
+# print(binascii.hexlify(b'Foo'))
